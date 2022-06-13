@@ -1,6 +1,12 @@
+# Coverage
+coverage
 
-# Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode,node,macos,dotenv
-# Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode,node,macos,dotenv
+# Transpiled files
+build/
+
+# VS Code
+.vscode
+!.vscode/tasks.js
 
 ### dotenv ###
 .env
@@ -12,7 +18,7 @@
 .LSOverride
 
 # Icon must end with two \r
-Icon
+Icon
 
 # Thumbnails
 ._*
@@ -157,9 +163,6 @@ dist
 # TernJS port file
 .tern-port
 
-# Stores VSCode versions used for testing VSCode extensions
-.vscode-test
-
 # yarn v2
 .yarn/cache
 .yarn/unplugged
@@ -171,34 +174,5 @@ dist
 # Serverless Webpack directories
 .webpack/
 
-# Optional stylelint cache
-
-# SvelteKit build / generate output
-.svelte-kit
-
-### VisualStudioCode ###
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-!.vscode/*.code-snippets
-
-# Local History for Visual Studio Code
-.history/
-
-# Built Visual Studio Code Extensions
-*.vsix
-
-### VisualStudioCode Patch ###
-# Ignore all local history of files
-.history
-.ionide
-
-# Support for Project snippet scope
-.vscode/*.code-snippets
-
-# Ignore code-workspaces
-*.code-workspace
-
-# End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,node,macos,dotenv
+# JetBrains IDEs
+.idea/
