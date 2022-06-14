@@ -21,6 +21,8 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@jitl/notion-api": "0.2.2",
+    "@notionhq/client": "1.0.4",
     "tslib": "2.4.0"
   },
   "devDependencies": {
