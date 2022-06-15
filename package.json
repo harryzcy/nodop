@@ -22,10 +22,9 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@jitl/notion-api": "0.2.2",
     "@notionhq/client": "1.0.4",
     "js-yaml": "^4.1.0",
-    "tslib": "2.4.0"
+    "tslib": "^2.4.0"
   },
   "devDependencies": {
     "@types/jest": "28.1.1",
