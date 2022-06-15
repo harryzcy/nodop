@@ -238,7 +238,7 @@ describe('loadConfig', () => {
 
   it('error, not file or directory', async () => {
     const filename = '__tests__/testdata/symlink'
-    await fs.promises.symlink('not-exist', filename)
+    await fs.promises.symlink('conf.yaml', filename)
 
     const t = async () => await loadConfig(filename)
     await expect(t).rejects.toThrowError('Invalid config path')
