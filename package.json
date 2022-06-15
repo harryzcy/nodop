@@ -15,6 +15,7 @@
     "build:watch": "tsc -w -p tsconfig.json",
     "build:release": "npm run clean && tsc -p tsconfig.release.json",
     "lint": "eslint . --ext .ts --ext .mts",
+    "lint:fix": "eslint . --ext .ts --ext .mts --fix",
     "test": "jest --coverage",
     "prettier": "prettier --config .prettierrc --write .",
     "test:watch": "jest --watch"
@@ -23,10 +24,12 @@
   "dependencies": {
     "@jitl/notion-api": "0.2.2",
     "@notionhq/client": "1.0.4",
+    "js-yaml": "^4.1.0",
     "tslib": "2.4.0"
   },
   "devDependencies": {
     "@types/jest": "28.1.1",
+    "@types/js-yaml": "^4.0.5",
     "@types/node": "16.11.39",
     "@typescript-eslint/eslint-plugin": "5.28.0",
     "@typescript-eslint/parser": "5.28.0",

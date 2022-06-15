@@ -1,0 +1,13 @@
+name: config
+
+databases:
+  - 443f14fe1a63a1724a1dc63ce0e4d202 # random hex id
+
+on: [create, update]
+
+jobs:
+  job1:
+    name: job1
+    if: if_statement
+    do:
+      echo "job1"

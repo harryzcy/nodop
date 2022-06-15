@@ -1,5 +1,5 @@
-import { Client } from "@notionhq/client";
-import { isFullPage, iteratePaginatedAPI, asyncIterableToArray, Page } from '@jitl/notion-api';
+import { Client } from "@notionhq/client"
+import { isFullPage, iteratePaginatedAPI, asyncIterableToArray, Page } from '@jitl/notion-api'
 
 export const notion = new Client({ auth: process.env.NOTION_KEY })
 
@@ -15,9 +15,9 @@ export async function getNewPagesFromDatabase(databaseId: string): Promise<Array
         },
       }
     })
-  );
+  )
 
-  return resultsWithPartialPages.filter(isFullPage);
+  return resultsWithPartialPages.filter(isFullPage)
 }
 
 export async function setPageProperty(pageId: string, propertyName: string, value: any) {
