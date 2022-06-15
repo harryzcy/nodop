@@ -11,7 +11,7 @@ describe('validateConfig', () => {
   it('valid config, one db', () => {
     const config: ConfigYaml = {
       name: 'config',
-      databases: 'databaseId',
+      target: 'databaseId',
       on: ['create', 'update'],
       jobs: {
         job1: { name: 'job1', if: 'if1', do: 'command1' },
@@ -27,7 +27,7 @@ describe('validateConfig', () => {
   it('valid config, multiple db', () => {
     const config: ConfigYaml = {
       name: 'config',
-      databases: ['databaseId1', 'databaseId2'],
+      target: ['databaseId1', 'databaseId2'],
       on: ['create', 'update'],
       jobs: { job1: { name: 'job1', if: 'if1', do: 'command1' } }
     }
@@ -39,7 +39,7 @@ describe('validateConfig', () => {
   it('valid config, single on', () => {
     const config: ConfigYaml = {
       name: 'config',
-      databases: ['databaseId1', 'databaseId2'],
+      target: ['databaseId1', 'databaseId2'],
       on: 'create',
       jobs: { job1: { name: 'job1', if: 'if1', do: 'command1' } }
     }
@@ -50,7 +50,7 @@ describe('validateConfig', () => {
 
   it('valid config, no name', () => {
     const config: ConfigYaml = {
-      databases: ['databaseId1', 'databaseId2'],
+      target: ['databaseId1', 'databaseId2'],
       on: 'create',
       jobs: { job1: { name: 'job1', if: 'if1', do: 'command1' } }
     }
@@ -61,7 +61,7 @@ describe('validateConfig', () => {
 
   it('valid config, no job name', () => {
     const config: ConfigYaml = {
-      databases: ['databaseId1', 'databaseId2'],
+      target: ['databaseId1', 'databaseId2'],
       on: 'create',
       jobs: { job1: { if: 'if1', do: 'command1' } }
     }
@@ -73,7 +73,7 @@ describe('validateConfig', () => {
   it('invalid config, non string name', () => {
     const config: ConfigYaml = {
       name: 1,
-      databases: ['databaseId1', 'databaseId2'],
+      target: ['databaseId1', 'databaseId2'],
       on: 'create',
       jobs: { job1: { if: 'if1', do: 'command1' } }
     }
@@ -89,12 +89,12 @@ describe('validateConfig', () => {
     }
     const { success, errors } = validateConfig(config)
     expect(success).toBe(false)
-    expect(errors).toBe('databases must be a string or an array')
+    expect(errors).toBe('target must be a string or an array')
   })
 
   it('invalid config, no on', () => {
     const config: ConfigYaml = {
-      databases: ['databaseId1', 'databaseId2'],
+      target: ['databaseId1', 'databaseId2'],
       jobs: { job1: { name: 'job1', if: 'if1', do: 'command1' } }
     }
     const { success, errors } = validateConfig(config)
@@ -104,7 +104,7 @@ describe('validateConfig', () => {
 
   it('invalid config, no jobs', () => {
     const config: ConfigYaml = {
-      databases: ['databaseId1', 'databaseId2'],
+      target: ['databaseId1', 'databaseId2'],
       on: 'create',
     }
     const { success, errors } = validateConfig(config)
@@ -114,7 +114,7 @@ describe('validateConfig', () => {
 
   it('invalid config, invalid job.if and job.do', () => {
     const config: ConfigYaml = {
-      databases: ['databaseId1', 'databaseId2'],
+      target: ['databaseId1', 'databaseId2'],
       on: 'create',
       jobs: { job1: {} }
     }
@@ -128,7 +128,7 @@ describe('parseConfig', () => {
   it('valid config, strings', () => {
     const content = `
       name: config
-      databases: databaseId
+      target: databaseId
       on: create
       jobs:
         job1:
@@ -139,7 +139,7 @@ describe('parseConfig', () => {
     const config = parseConfig('filename', content)
     expect(config).toEqual({
       name: 'config',
-      databases: ['databaseId'],
+      target: ['databaseId'],
       on: ['create'],
       jobs: { job1: { name: 'job1', if: 'if1', do: ['command1'] } }
     })
@@ -148,7 +148,7 @@ describe('parseConfig', () => {
   it('valid config, arrays', () => {
     const content = `
       name: config
-      databases:
+      target:
         - databaseId1
         - databaseId2
       on: [create, update]
@@ -167,7 +167,7 @@ describe('parseConfig', () => {
     const config = parseConfig('filename', content)
     expect(config).toEqual({
       name: 'config',
-      databases: ['databaseId1', 'databaseId2'],
+      target: ['databaseId1', 'databaseId2'],
       on: ['create', 'update'],
       jobs: {
         job1: { name: 'job_name1', if: 'if1', do: ['command1'] },
@@ -178,7 +178,7 @@ describe('parseConfig', () => {
 
   it('invalid config', () => {
     const content = `
-      databases: databaseId
+      target: databaseId
       on: create`
 
     const t = () => parseConfig('filename', content)
@@ -191,7 +191,7 @@ describe('readConfigFile', () => {
     const config = await readConfigFile('__tests__/testdata/conf.yaml')
     expect(config).toEqual({
       name: 'config',
-      databases: ['443f14fe1a63a1724a1dc63ce0e4d202'],
+      target: ['443f14fe1a63a1724a1dc63ce0e4d202'],
       on: ['create', 'update'],
       jobs: {
         job1: { name: 'job1', if: 'if_statement', do: ['echo "job1"'] },
@@ -208,7 +208,7 @@ describe('loadConfig', () => {
     expect(configs).toHaveLength(1)
     expect(configs[0]).toEqual({
       name: 'config',
-      databases: ['443f14fe1a63a1724a1dc63ce0e4d202'],
+      target: ['443f14fe1a63a1724a1dc63ce0e4d202'],
       on: ['create', 'update'],
       jobs: {
         job1: { name: 'job1', if: 'if_statement', do: ['echo "job1"'] },
@@ -223,7 +223,7 @@ describe('loadConfig', () => {
     expect(configs).toHaveLength(1)
     expect(configs[0]).toEqual({
       name: 'config',
-      databases: ['443f14fe1a63a1724a1dc63ce0e4d202'],
+      target: ['443f14fe1a63a1724a1dc63ce0e4d202'],
       on: ['create', 'update'],
       jobs: {
         job1: { name: 'job1', if: 'if_statement', do: ['echo "job1"'] },

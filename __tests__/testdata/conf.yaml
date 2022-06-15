@@ -1,6 +1,6 @@
 name: config
 
-databases:
+target:
   - 443f14fe1a63a1724a1dc63ce0e4d202 # random hex id
 
 on: [create, update]

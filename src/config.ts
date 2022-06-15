@@ -8,7 +8,7 @@ export type JobId = string
 export interface ConfigYaml {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   name?: any
-  databases?: string[] | string
+  target?: string[] | string
   on?: string[] | string
   jobs?: Record<JobId, {
     name?: string
@@ -19,7 +19,7 @@ export interface ConfigYaml {
 
 export interface Configuration {
   name: string;
-  databases: string[];
+  target: string[];
   on: string[];
   jobs: Record<JobId, Job>;
 }
@@ -35,8 +35,8 @@ export function validateConfig(src: ConfigYaml): { success: boolean, errors: str
   if (src.name && typeof src.name !== 'string') {
     errors.push('name must be a string')
   }
-  if (typeof src.databases !== 'string' && !Array.isArray(src.databases)) {
-    errors.push('databases must be a string or an array')
+  if (typeof src.target !== 'string' && !Array.isArray(src.target)) {
+    errors.push('target must be a string or an array')
   }
   if (typeof src.on != 'string' && !Array.isArray(src.on)) {
     errors.push('on must be a string or an array')
@@ -70,11 +70,11 @@ export function parseConfig(filename: string, content: string): Configuration {
   }
 
   const name = src.name || filename
-  const databases: string[] = []
-  if (typeof src.databases === 'string') {
-    databases.push(src.databases)
+  const target: string[] = []
+  if (typeof src.target === 'string') {
+    target.push(src.target)
   } else {
-    databases.push(...src.databases)
+    target.push(...src.target)
   }
 
   const on: string[] = []
@@ -96,7 +96,7 @@ export function parseConfig(filename: string, content: string): Configuration {
 
   return {
     name,
-    databases,
+    target,
     on,
     jobs
   }
