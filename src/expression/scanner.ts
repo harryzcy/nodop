@@ -109,7 +109,7 @@ export class Scanner {
 
   isDivider(): boolean {
     const c = this.currentChar
-    return c == '(' || c == ')' || c == '[' || c == ']' || c == '.'
+    return c == '(' || c == ')' || c == '[' || c == ']' || c == '.' || c == ','
   }
 
   scanDivider(): TokenType {
