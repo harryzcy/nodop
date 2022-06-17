@@ -1,4 +1,4 @@
-import { notion } from '../src/notion.js'
+import { notion } from '../src/notion/notion.js'
 
 describe('notion client', () => {
   it('notion client is valid', () => {
