@@ -39,12 +39,37 @@ function evalExpression(page: Page, e: Expression): any {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function evalCallExpression(page: Page, e: CallExpression): any {
+  if (e.func === 'property') {
+    if (e.args.length !== 1) {
+      throw new Error('property takes exactly one argument')
+    }
+    const value = evalExpression(page, e.args[0])
+    return page.properties[value]
+  }
+
+  if (e.func === 'is_type') {
+    if (e.args.length !== 2) {
+      throw new Error('is_type takes exactly two arguments')
+    }
+    const property = evalExpression(page, e.args[0])
+    const expectedType = evalExpression(page, e.args[1])
+    return property.type === expectedType
+  }
+
   if (e.func === 'is_empty') {
     if (e.args.length !== 1) {
       throw new Error('is_empty takes exactly one argument')
     }
-    const value = evalExpression(page, e.args[0])
-    return value === null || value === ''
+    const property = evalExpression(page, e.args[0])
+
+    // check if the value for page property is empty
+    if (typeof property === 'object') {
+      if (property === null) return true
+      if ('type' in property) {
+        return property[property.type] === null || property[property.type] === ''
+      }
+    }
+    return property === null || property === ''
   }
 
   if (e.func === 'is_not_empty') {
@@ -53,14 +78,6 @@ function evalCallExpression(page: Page, e: CallExpression): any {
     }
     const value = evalExpression(page, e.args[0])
     return value !== null && value !== ''
-  }
-
-  if (e.func === 'property') {
-    if (e.args.length !== 1) {
-      throw new Error('property takes exactly one argument')
-    }
-    const value = evalExpression(page, e.args[0])
-    return page.properties[value]
   }
 
   throw new Error(`Unknown call expression: ${e.func}`)
