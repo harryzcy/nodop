@@ -1,4 +1,4 @@
-import { getNewPagesFromDatabase, setPageProperty } from "./notion.js"
+import { getNewPagesFromDatabase, setPageProperty } from "./notion/notion.js"
 
 const databaseId = process.env.DATABASE_ID
 
