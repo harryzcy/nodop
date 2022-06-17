@@ -1,0 +1,234 @@
+/**
+ * Grammar
+ * 
+ * Expression ::= Identifier ( ArgumentList? ) // CallExpression
+*               | ( Expression )               // GroupExpression
+ *              | Expression biop Expression   // BinaryExpression
+ *              | uniop Expression             // UnaryExpression
+ *              | Expression.Identifier        // MemberExpression
+ *              | Literal
+ * ArgumentList ::= Expression (, Expression)*
+ * Identifier ::= [a-z_]
+ * biop ::= && | ||
+ * Literal ::= String | boolean | number
+ * String ::= ".*"
+ */
+
+import { Scanner, Token, TokenType } from "./scanner.js"
+
+export type Expression = CallExpression | MemberExpression | GroupExpression | BinaryExpression | UnaryExpression | Literal;
+
+export type CallExpression = {
+  type: 'call_expression';
+  func: string;
+  args: Expression[];
+}
+
+export type MemberExpression = {
+  type: 'member_expression';
+  expr: Expression;
+  member: string;
+}
+
+export type GroupExpression = {
+  type: 'group_expression';
+  expr: Expression;
+}
+
+export type BinaryExpression = {
+  type: 'binary_expression';
+  left: Expression;
+  right: Expression;
+  operator: TokenType; // &&, ||
+}
+
+export type UnaryExpression = {
+  type: 'unary_expression';
+  operator: TokenType; // !
+  expr: Expression;
+}
+
+export type Literal = {
+  type: "string"
+  value: string
+} | {
+  type: "boolean"
+  value: boolean
+} | {
+  type: "number"
+  value: number
+}
+
+export class Parser {
+  scanner: Scanner
+  currentToken: Token
+
+  constructor(source: string) {
+    this.scanner = new Scanner(source)
+  }
+
+  parse(): Expression {
+    this.currentToken = this.scanner.scan()
+    return this.parseExpression()
+  }
+
+  parseExpression(): Expression {
+    return this.parseDisjunctionExpression()
+  }
+
+  parseDisjunctionExpression(): Expression {
+    let e = this.parseConjunctionExpression()
+    while (this.currentToken.type() === TokenType.OR) {
+      const op = this.takeIt()
+      const right = this.parseConjunctionExpression()
+      e = {
+        type: 'binary_expression',
+        left: e,
+        right: right,
+        operator: op.type()
+      }
+    }
+    return e
+  }
+
+  parseConjunctionExpression(): Expression {
+    let e = this.parseEqualityExpression()
+    while (this.currentToken.type() === TokenType.AND) {
+      const op = this.takeIt()
+      const right = this.parseEqualityExpression()
+      e = {
+        type: 'binary_expression',
+        left: e,
+        right: right,
+        operator: op.type()
+      }
+    }
+    return e
+  }
+
+  parseEqualityExpression(): Expression {
+    let e = this.parseRelationalExpression()
+    while (this.currentToken.type() === TokenType.EQUAL || this.currentToken.type() === TokenType.NOT_EQUAL) {
+      const op = this.takeIt()
+      const right = this.parseRelationalExpression()
+      e = {
+        type: 'binary_expression',
+        left: e,
+        right: right,
+        operator: op.type()
+      }
+    }
+    return e
+  }
+
+  parseRelationalExpression(): Expression {
+    let e = this.parseUnaryExpression()
+    while (this.currentToken.type() === TokenType.LESS_THAN ||
+      this.currentToken.type() === TokenType.LESS_OR_EQUAL ||
+      this.currentToken.type() === TokenType.GREATER_THAN ||
+      this.currentToken.type() === TokenType.GREATER_OR_EQUAL) {
+      const op = this.takeIt()
+      const right = this.parseUnaryExpression()
+      e = {
+        type: 'binary_expression',
+        left: e,
+        right: right,
+        operator: op.type()
+      }
+    }
+    return e
+  }
+
+  parseUnaryExpression(): Expression {
+    if (this.currentToken.type() === TokenType.NOT) {
+      const op = this.takeIt()
+      const expr = this.parseUnaryExpression()
+      return {
+        type: 'unary_expression',
+        expr,
+        operator: op.type()
+      }
+    } else {
+      return this.parseUnitExpression()
+    }
+  }
+
+  parseUnitExpression(): Expression {
+    let func: string // used for call expression
+    let args: Expression[] // used for call expression
+    let expr: Expression // used for group expression or member expression
+
+    switch (this.currentToken.type()) {
+      // literal
+      case TokenType.BOOLEAN:
+        return {
+          type: 'boolean',
+          value: this.takeIt().value() === 'true'
+        }
+      case TokenType.NUM:
+        return {
+          type: 'number',
+          value: parseFloat(this.takeIt().value())
+        }
+      case TokenType.STRING:
+        return {
+          type: 'string',
+          value: this.takeIt().value()
+        }
+      // identifier
+      case TokenType.IDENTIFIER:
+        func = this.takeIt().value()
+        this.take(TokenType.LEFT_PAREN)
+        args = this.parseArgumentList()
+        this.take(TokenType.RIGHT_PAREN)
+        return {
+          type: 'call_expression',
+          func,
+          args
+        }
+      // group expression
+      case TokenType.LEFT_PAREN:
+        this.takeIt()
+        expr = this.parseExpression()
+        this.take(TokenType.RIGHT_PAREN)
+        return {
+          type: 'group_expression',
+          expr
+        }
+      // member expression
+      default:
+        expr = this.parseExpression()
+        this.take(TokenType.DOT)
+        return {
+          type: 'member_expression',
+          expr,
+          member: this.take(TokenType.IDENTIFIER).value()
+        }
+    }
+  }
+
+  parseArgumentList(): Expression[] {
+    const args: Expression[] = []
+    if (this.currentToken.type() !== TokenType.RIGHT_PAREN) {
+      args.push(this.parseExpression())
+      while (this.currentToken.type() === TokenType.COMMA) {
+        this.takeIt()
+        args.push(this.parseExpression())
+      }
+    }
+    return args
+  }
+
+  takeIt(): Token {
+    const t = this.currentToken
+    this.currentToken = this.scanner.scan()
+    return t
+  }
+
+  take(expected: TokenType): Token {
+    if (this.currentToken.type() !== expected) {
+      throw new Error(`Expected ${expected}, but got ${this.currentToken.type()}`)
+    }
+    return this.takeIt()
+  }
+}
