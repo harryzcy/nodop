@@ -4,7 +4,8 @@ import {
   parseConfig,
   readConfigFile,
   loadConfig,
-  getAllConfigs
+  getAllConfigs,
+  getConfigIndex, Configuration
 } from '../src/config.js'
 
 describe('validateConfig', () => {
@@ -243,5 +244,80 @@ describe('loadConfig', () => {
     const t = async () => await loadConfig(filename)
     await expect(t).rejects.toThrowError('Invalid config path')
     await fs.promises.rm(filename)
+  })
+})
+
+describe('getConfigIndex', () => {
+  const setConfigs = (configs: Configuration[]) => {
+    const globalConfig = getAllConfigs()
+    globalConfig.splice(0, globalConfig.length)
+    globalConfig.push(...configs)
+  }
+
+  it('single config', () => {
+    const configs = [
+      {
+        name: 'config',
+        target: ['443f14fe1a63a1724a1dc63ce0a5d202'],
+        on: ['create', 'update'],
+        jobs: {
+          set_todo: {
+            name: 'set_todo',
+            if: "is_empty(property('Status'))",
+            do: ["set_property('Status', 'TODO')"]
+          },
+        }
+      }
+    ]
+    setConfigs(configs)
+
+    const index = getConfigIndex()
+    expect(Object.keys(index)).toHaveLength(1)
+    expect(index['443f14fe1a63a1724a1dc63ce0a5d202'].on).toEqual(new Set(['create', 'update']))
+    expect(index['443f14fe1a63a1724a1dc63ce0a5d202'].configs).toHaveLength(1)
+    expect(index['443f14fe1a63a1724a1dc63ce0a5d202'].configs).toEqual(configs)
+  })
+
+  it('multiple configs', () => {
+    const configs = [
+      {
+        name: 'config',
+        target: ['443f14fe1a63a1724a1dc63ce0a5d202'],
+        on: ['create', 'update'],
+        jobs: {
+          set_todo: {
+            name: 'set_todo',
+            if: "is_empty(property('Status'))",
+            do: ["set_property('Status', 'TODO')"]
+          },
+        }
+      },
+      {
+        name: 'config-2',
+        target: ['443f14fe1a63a1724a1dc63ce0a5d202', '443f14fe1a63a1724a1dc63ce0a5d203'],
+        on: ['create'],
+        jobs: {
+          set_todo: {
+            name: 'set_todo',
+            if: "is_empty(property('Field'))",
+            do: ["set_property('Field', 'foo')"]
+          },
+        }
+      }
+    ]
+    setConfigs(configs)
+
+    const index = getConfigIndex()
+    expect(Object.keys(index)).toHaveLength(2)
+    expect(index['443f14fe1a63a1724a1dc63ce0a5d202'].on).toEqual(new Set(['create', 'update']))
+    expect(index['443f14fe1a63a1724a1dc63ce0a5d203'].on).toEqual(new Set(['create']))
+
+    expect(index['443f14fe1a63a1724a1dc63ce0a5d202'].configs).toHaveLength(2)
+    expect(index['443f14fe1a63a1724a1dc63ce0a5d202'].configs).toContainEqual(configs[0])
+    expect(index['443f14fe1a63a1724a1dc63ce0a5d202'].configs).toContainEqual(configs[1])
+
+    expect(index['443f14fe1a63a1724a1dc63ce0a5d203'].configs).toHaveLength(1)
+    expect(index['443f14fe1a63a1724a1dc63ce0a5d203'].configs).toContainEqual(configs[1])
+    expect(index['443f14fe1a63a1724a1dc63ce0a5d203'].configs).not.toContainEqual(configs[0])
   })
 })

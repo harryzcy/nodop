@@ -108,7 +108,7 @@ export async function readConfigFile(filePath: string): Promise<Configuration> {
   return parseConfig(filename, content)
 }
 
-const configurations = []
+const configurations: Array<Configuration> = []
 
 /**
  * Load all config files from the given path.
@@ -143,4 +143,30 @@ export async function loadConfig(path: string) {
 
 export function getAllConfigs() {
   return configurations
+}
+
+export type DatabaseID = string
+export type ConfigurationIndex = Record<DatabaseID, {
+  on: Set<string>
+  configs: Configuration[]
+}>
+
+export function getConfigIndex() {
+  const index: ConfigurationIndex = {}
+  for (const config of configurations) {
+    for (const dbID of config.target) {
+      if (!index[dbID]) {
+        index[dbID] = {
+          on: new Set(config.on),
+          configs: [config]
+        }
+      } else {
+        index[dbID].configs.push(config)
+        for (const on of config.on) {
+          index[dbID].on.add(on)
+        }
+      }
+    }
+  }
+  return index
 }
