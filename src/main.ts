@@ -3,13 +3,12 @@ import { runOnce, runNonStop } from "./runner.js"
 import cache from "./cache.js"
 
 const configPath = process.env.CONFIG_PATH || 'nodop'
-const cacheDir = process.env.CACHE_DIR
 
 async function main() {
   await loadConfig(configPath)
   const index = getConfigIndex()
 
-  await cache.startRun(cacheDir)
+  await cache.startRun()
 
   if (process.argv.includes('--daemon')) {
     await runNonStop(index)
@@ -17,7 +16,7 @@ async function main() {
     await runOnce(index)
   }
 
-  await cache.stopRun(cacheDir)
+  await cache.stopRun()
 }
 
 main()

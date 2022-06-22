@@ -20,6 +20,7 @@ interface Cache {
   lastTimestamp: number
 }
 
+const cacheDir = process.env.CACHE_DIR
 const cache: Cache = {
   running: false,
   lastTimestamp: 0
@@ -42,7 +43,7 @@ async function loadCache(cacheDir?: string) {
   }
 }
 
-async function saveCache(cacheDir?: string) {
+async function saveCache() {
   if (!await isDirectory(cacheDir)) {
     return
   }
@@ -59,20 +60,24 @@ function getLastTimestamp(): number {
   return cache.lastTimestamp
 }
 
-async function startRun(cacheDir: string) {
-  await loadCache(cacheDir)
-  cache.running = true
-  await saveCache(cacheDir)
+function setLastTimestamp(timestamp: number) {
+  cache.lastTimestamp = timestamp
 }
 
-async function stopRun(cacheDir: string) {
+async function startRun() {
+  await loadCache(cacheDir)
+  cache.running = true
+  await saveCache()
+}
+
+async function stopRun() {
   cache.running = false
-  cache.lastTimestamp = Date.now()
-  await saveCache(cacheDir)
+  await saveCache()
 }
 
 export default {
   getLastTimestamp,
+  setLastTimestamp,
   startRun,
   stopRun
 }
