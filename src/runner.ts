@@ -3,6 +3,40 @@ import { Configuration, ConfigurationIndex, Job } from "./config.js"
 import { Page } from "./notion/typing.js"
 import { evaluate } from "./expression/expr.js"
 
+const CHECK_INTERVAL = 60 // seconds
+
+let shouldStop = false
+const stopDaemon = () => {
+  shouldStop = true
+}
+
+process.on('SIGINT', stopDaemon)
+process.on('SIGQUIT', stopDaemon)
+process.on('SIGTERM', stopDaemon)
+
+export async function runNonStop(index: ConfigurationIndex) {
+  // every second, it's yielded to check if it should stop
+
+  let counter = 0
+  while (!shouldStop) {
+    if (counter % CHECK_INTERVAL === 0) {
+      runOnce(index)
+      counter == 0
+    }
+    counter++
+    await sleep(1000) // 1 second
+  }
+}
+
+function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+export async function runOnce(index: ConfigurationIndex) {
+  console.log(`[${new Date().toISOString()}] Running once...`)
+  await runWorkflow(index)
+}
+
 export async function runWorkflow(index: ConfigurationIndex) {
   for (const [databaseId, value] of Object.entries(index)) {
     await runWorkflowForDB(databaseId, value.on, value.configs)
@@ -10,6 +44,7 @@ export async function runWorkflow(index: ConfigurationIndex) {
 }
 
 async function runWorkflowForDB(databaseId: string, on: Set<string>, configs: Configuration[]) {
+  // TODO: handle rate limit
   const pages = await getNewPagesFromDatabase(databaseId, on)
 
   for (const config of configs) {
