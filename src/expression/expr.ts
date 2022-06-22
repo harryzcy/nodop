@@ -1,6 +1,7 @@
 import { Page } from '../notion/typing.js'
 import { CallExpression, MemberExpression, BinaryExpression, UnaryExpression, Expression, Parser } from './parser.js'
 import { TokenType } from './scanner.js'
+import { setPageProperty } from '../notion/notion.js'
 
 export async function evaluate(page: Page, s: string): Promise<boolean | null> {
   const parser = new Parser(s)
@@ -80,6 +81,16 @@ async function evalCallExpression(page: Page, e: CallExpression): Promise<any> {
     return value !== null && value !== ''
   }
 
+  if (e.func === 'set_property') {
+    if (e.args.length !== 2) {
+      throw new Error('set_property takes exactly two arguments')
+    }
+    const property = await evalExpression(page, e.args[0])
+    const value = await evalExpression(page, e.args[1])
+    await setPageProperty(page.id, property, value)
+    return null
+  }
+
   throw new Error(`Unknown call expression: ${e.func}`)
 }
 
@@ -94,7 +105,7 @@ async function evalMemberExpression(page: Page, e: MemberExpression): Promise<an
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function evalBinaryExpression(page: Page, e: BinaryExpression):  Promise<any> {
+async function evalBinaryExpression(page: Page, e: BinaryExpression): Promise<any> {
   const left = await evalExpression(page, e.left)
   const right = await evalExpression(page, e.right)
 
@@ -121,7 +132,7 @@ async function evalBinaryExpression(page: Page, e: BinaryExpression):  Promise<a
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function evalUnaryExpression(page: Page, e: UnaryExpression):  Promise<any> {
+async function evalUnaryExpression(page: Page, e: UnaryExpression): Promise<any> {
   const expr = await evalExpression(page, e.expr)
   if (e.operator === TokenType.NOT) {
     return !expr
