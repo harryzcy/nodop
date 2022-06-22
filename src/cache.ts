@@ -60,8 +60,9 @@ function getLastTimestamp(): number {
   return cache.lastTimestamp
 }
 
-function setLastTimestamp(timestamp: number) {
+async function setLastTimestamp(timestamp: number) {
   cache.lastTimestamp = timestamp
+  await saveCache()
 }
 
 async function startRun() {

@@ -3,7 +3,7 @@ import { Configuration, ConfigurationIndex, Job } from "./config.js"
 import { Page } from "./notion/typing.js"
 import { evaluate } from "./expression/expr.js"
 
-const CHECK_INTERVAL = 60 // seconds
+const CHECK_INTERVAL = 1 // seconds
 
 let shouldStop = false
 const stopDaemon = () => {

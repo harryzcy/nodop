@@ -1,5 +1,6 @@
 import { Client } from "@notionhq/client"
 import { Page, PartialPage } from "./typing.js"
+import cache from "../cache.js"
 
 export const notion = new Client({ auth: process.env.NOTION_KEY })
 
@@ -17,15 +18,30 @@ export function eventsContainsOnly(events: Set<string>, ...types: string[]) {
   return !hasOthers
 }
 
+let lastTimestamp = cache.getLastTimestamp()
+if (lastTimestamp === 0) {
+  lastTimestamp = Date.now()
+}
+
+async function getLastISOTime() {
+  const iso = new Date(lastTimestamp).toISOString()
+
+  lastTimestamp = Date.now()
+  await cache.setLastTimestamp(lastTimestamp)
+
+  return iso
+}
 
 export async function getNewPagesFromDatabase(databaseId: string, events: Set<string> = null): Promise<Array<Page>> {
+  // TODO: use an in-memory store to avoid duplicates
+
   let nextCursor: string | null | undefined = undefined
   let filter = null
   if (eventsContainsOnly(events, 'create', 'update')) {
     filter = {
       timestamp: 'last_edited_time',
       last_edited_time: {
-        on_or_after: '2022-06-13T00:00:00+00:00',
+        on_or_after: await getLastISOTime(),
       },
     }
   }
