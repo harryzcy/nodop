@@ -5,7 +5,7 @@ FROM base as builder
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm install
+RUN npm ci --no-audit
 
 COPY . .
 RUN npm run build:release
@@ -15,7 +15,7 @@ FROM base
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm install
+RUN npm ci --no-audit
 
 COPY --from=builder /app/build ./build
 
