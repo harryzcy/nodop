@@ -15,18 +15,17 @@ async function runWorkflowForDB(databaseId: string, on: Set<string>, configs: Co
   for (const config of configs) {
     for (const job of Object.values(config.jobs)) {
       for (const page of pages) {
-        runJobOnPage(page, job)
+        await runJobOnPage(page, job)
       }
     }
   }
 }
 
-function runJobOnPage(page: Page, job: Job) {
-  const condition = evaluate(page, job.if)
+async function runJobOnPage(page: Page, job: Job) {
+  const condition = await evaluate(page, job.if)
   if (condition) {
-    console.log(page)
-    // for (const command of job.do) {
-      // const value = evaluate(page, command)
-    // }
+    for (const command of job.do) {
+      await evaluate(page, command)
+    }
   }
 }
