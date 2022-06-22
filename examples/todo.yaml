@@ -1,0 +1,13 @@
+name: TODO Database
+
+target:
+  - <32-digit-database-id>
+
+on: [create, update]
+
+jobs:
+  set_todo:
+    name: set_todo
+    if: is_empty(property('Status'))
+    do:
+      set_property('Status', 'TODO')
