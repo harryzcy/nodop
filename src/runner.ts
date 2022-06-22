@@ -58,9 +58,14 @@ async function runWorkflowForDB(databaseId: string, on: Set<string>, configs: Co
 
 async function runJobOnPage(page: Page, job: Job) {
   const condition = await evaluate(page, job.if)
-  if (condition) {
-    for (const command of job.do) {
-      await evaluate(page, command)
+  if (!condition) return
+
+  for (const step of job.steps) {
+    const condition = step.if ? await evaluate(page, step.if) : true
+    if (!condition) break
+
+    for (const line of step.run) {
+      await evaluate(page, line)
     }
   }
 }

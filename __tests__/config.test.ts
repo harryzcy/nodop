@@ -15,8 +15,8 @@ describe('validateConfig', () => {
       target: 'databaseId',
       on: ['create', 'update'],
       jobs: {
-        job1: { name: 'job1', if: 'if1', do: 'command1' },
-        job2: { name: 'job2', if: 'if2', do: 'command2\ncommand3' }
+        job1: { name: 'job1', if: 'if1', steps: [{ run: 'command1' }] },
+        job2: { name: 'job2', if: 'if2', steps: [{ run: 'command2\ncommand3' }] }
       }
     }
     const { success, errors } = validateConfig(config)
@@ -30,7 +30,7 @@ describe('validateConfig', () => {
       name: 'config',
       target: ['databaseId1', 'databaseId2'],
       on: ['create', 'update'],
-      jobs: { job1: { name: 'job1', if: 'if1', do: 'command1' } }
+      jobs: { job1: { name: 'job1', if: 'if1', steps: [{ run: 'command1' }] } }
     }
     const { success, errors } = validateConfig(config)
     expect(success).toBe(true)
@@ -42,7 +42,7 @@ describe('validateConfig', () => {
       name: 'config',
       target: ['databaseId1', 'databaseId2'],
       on: 'create',
-      jobs: { job1: { name: 'job1', if: 'if1', do: 'command1' } }
+      jobs: { job1: { name: 'job1', if: 'if1', steps: [{ run: 'command1' }] } }
     }
     const { success, errors } = validateConfig(config)
     expect(success).toBe(true)
@@ -53,7 +53,7 @@ describe('validateConfig', () => {
     const config: ConfigYaml = {
       target: ['databaseId1', 'databaseId2'],
       on: 'create',
-      jobs: { job1: { name: 'job1', if: 'if1', do: 'command1' } }
+      jobs: { job1: { name: 'job1', if: 'if1', steps: [{ run: 'command1' }] } }
     }
     const { success, errors } = validateConfig(config)
     expect(success).toBe(true)
@@ -64,7 +64,7 @@ describe('validateConfig', () => {
     const config: ConfigYaml = {
       target: ['databaseId1', 'databaseId2'],
       on: 'create',
-      jobs: { job1: { if: 'if1', do: 'command1' } }
+      jobs: { job1: { if: 'if1', steps: [{ run: 'command1' }] } }
     }
     const { success, errors } = validateConfig(config)
     expect(success).toBe(true)
@@ -76,7 +76,7 @@ describe('validateConfig', () => {
       name: 1,
       target: ['databaseId1', 'databaseId2'],
       on: 'create',
-      jobs: { job1: { if: 'if1', do: 'command1' } }
+      jobs: { job1: { if: 'if1', steps: [{ run: 'command1' }] } }
     }
     const { success, errors } = validateConfig(config)
     expect(success).toBe(false)
@@ -86,7 +86,7 @@ describe('validateConfig', () => {
   it('invalid config, no db', () => {
     const config: ConfigYaml = {
       on: 'create',
-      jobs: { job1: { name: 'job1', if: 'if1', do: 'command1' } }
+      jobs: { job1: { name: 'job1', if: 'if1', steps: [{ run: 'command1' }] } }
     }
     const { success, errors } = validateConfig(config)
     expect(success).toBe(false)
@@ -96,7 +96,7 @@ describe('validateConfig', () => {
   it('invalid config, no on', () => {
     const config: ConfigYaml = {
       target: ['databaseId1', 'databaseId2'],
-      jobs: { job1: { name: 'job1', if: 'if1', do: 'command1' } }
+      jobs: { job1: { name: 'job1', if: 'if1', steps: [{ run: 'command1' }] } }
     }
     const { success, errors } = validateConfig(config)
     expect(success).toBe(false)
@@ -121,7 +121,7 @@ describe('validateConfig', () => {
     }
     const { success, errors } = validateConfig(config)
     expect(success).toBe(false)
-    expect(errors).toBe('jobs.<job_id>.if must be a string, jobs.<job_id>.do must be a string or an array')
+    expect(errors).toBe('jobs.<job_id>.if must be a string, jobs.<job_id>.steps must be an array')
   })
 })
 
@@ -135,14 +135,24 @@ describe('parseConfig', () => {
         job1:
           name: job1
           if: if1
-          do: command1`
+          steps:
+            - name: step1
+              run: command1`
 
     const config = parseConfig('filename', content)
     expect(config).toEqual({
       name: 'config',
       target: ['databaseId'],
       on: ['create'],
-      jobs: { job1: { name: 'job1', if: 'if1', do: ['command1'] } }
+      jobs: {
+        job1: {
+          name: 'job1', if: 'if1', steps: [{
+            name: 'step1',
+            if: undefined,
+            run: ['command1']
+          }]
+        }
+      }
     })
   })
 
@@ -157,13 +167,17 @@ describe('parseConfig', () => {
         job1:
           name: job_name1
           if: if1
-          do: command1
+          steps:
+            - name: step1
+              run: command1
         job2:
           name: job_name2
           if: if2
-          do: |
-            command2
-            command3 --arg value`
+          steps:
+            - run: |
+                command2
+                command3
+            - run: command4 --arg value`
 
     const config = parseConfig('filename', content)
     expect(config).toEqual({
@@ -171,8 +185,25 @@ describe('parseConfig', () => {
       target: ['databaseId1', 'databaseId2'],
       on: ['create', 'update'],
       jobs: {
-        job1: { name: 'job_name1', if: 'if1', do: ['command1'] },
-        job2: { name: 'job_name2', if: 'if2', do: ['command2', 'command3 --arg value'] }
+        job1: {
+          name: 'job_name1', if: 'if1', steps: [{
+            name: 'step1',
+            run: ['command1']
+          }]
+        },
+        job2: {
+          name: 'job_name2', if: 'if2', steps: [
+            {
+              name: 'Step 1',
+              if: undefined,
+              run: ['command2', 'command3']
+            },
+            {
+              name: 'Step 2',
+              if: undefined,
+              run: ['command4 --arg value']
+            }]
+        }
       }
     })
   })
@@ -195,7 +226,13 @@ describe('readConfigFile', () => {
       target: ['443f14fe1a63a1724a1dc63ce0e4d202'],
       on: ['create', 'update'],
       jobs: {
-        job1: { name: 'job1', if: 'if_statement', do: ['echo "job1"'] },
+        job1: {
+          name: 'job1', if: 'if_statement', steps: [{
+            name: 'step1',
+            if: "if_in_step1",
+            run: ['echo "step1"']
+          }]
+        },
       }
     })
   })
@@ -204,7 +241,7 @@ describe('readConfigFile', () => {
 describe('loadConfig', () => {
   it('file path', async () => {
     await loadConfig('__tests__/testdata/conf.yaml')
-    const configs = await getAllConfigs()
+    const configs = getAllConfigs()
 
     expect(configs).toHaveLength(1)
     expect(configs[0]).toEqual({
@@ -212,14 +249,20 @@ describe('loadConfig', () => {
       target: ['443f14fe1a63a1724a1dc63ce0e4d202'],
       on: ['create', 'update'],
       jobs: {
-        job1: { name: 'job1', if: 'if_statement', do: ['echo "job1"'] },
+        job1: {
+          name: 'job1', if: 'if_statement', steps: [{
+            name: 'step1',
+            if: 'if_in_step1',
+            run: ['echo "step1"']
+          }]
+        },
       }
     })
   })
 
   it('directory path', async () => {
     await loadConfig('__tests__/testdata')
-    const configs = await getAllConfigs()
+    const configs = getAllConfigs()
 
     expect(configs).toHaveLength(1)
     expect(configs[0]).toEqual({
@@ -227,14 +270,20 @@ describe('loadConfig', () => {
       target: ['443f14fe1a63a1724a1dc63ce0e4d202'],
       on: ['create', 'update'],
       jobs: {
-        job1: { name: 'job1', if: 'if_statement', do: ['echo "job1"'] },
+        job1: {
+          name: 'job1', if: 'if_statement', steps: [{
+            name: 'step1',
+            if: 'if_in_step1',
+            run: ['echo "step1"']
+          }]
+        },
       }
     })
   })
 
   it('error, no file', async () => {
     const t = async () => await loadConfig('__tests__/testdata/not-exist')
-    await expect(t).rejects.toThrowError('Invalid config path')
+    await expect(t).rejects.toThrowError('Invalid configuration')
   })
 
   it('error, not file or directory', async () => {
@@ -242,7 +291,7 @@ describe('loadConfig', () => {
     await fs.promises.symlink('conf.yaml', filename)
 
     const t = async () => await loadConfig(filename)
-    await expect(t).rejects.toThrowError('Invalid config path')
+    await expect(t).rejects.toThrowError('Invalid configuration')
     await fs.promises.rm(filename)
   })
 })
@@ -264,7 +313,10 @@ describe('getConfigIndex', () => {
           set_todo: {
             name: 'set_todo',
             if: "is_empty(property('Status'))",
-            do: ["set_property('Status', 'TODO')"]
+            steps: [{
+              name: 'set_todo',
+              run: ["set_property('Status', 'TODO')"]
+            }]
           },
         }
       }
@@ -288,7 +340,12 @@ describe('getConfigIndex', () => {
           set_todo: {
             name: 'set_todo',
             if: "is_empty(property('Status'))",
-            do: ["set_property('Status', 'TODO')"]
+            steps: [
+              {
+                name: 'step 1',
+                run: ["set_property('Status', 'TODO')"]
+              }
+            ]
           },
         }
       },
@@ -300,7 +357,12 @@ describe('getConfigIndex', () => {
           set_todo: {
             name: 'set_todo',
             if: "is_empty(property('Field'))",
-            do: ["set_property('Field', 'foo')"]
+            steps: [
+              {
+                name: 'step 1',
+                run: ["set_property('Field', 'foo')"]
+              }
+            ]
           },
         }
       }

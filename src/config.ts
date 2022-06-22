@@ -13,7 +13,11 @@ export interface ConfigYaml {
   jobs?: Record<JobId, {
     name?: string
     if?: string
-    do?: string
+    steps?: Array<{
+      name?: string
+      if?: string
+      run?: string
+    }>
   }>
 }
 
@@ -27,7 +31,13 @@ export interface Configuration {
 export interface Job {
   name?: string;
   if: string;
-  do: string[];
+  steps: Step[];
+}
+
+export interface Step {
+  name: string;
+  if?: string;
+  run: string[];
 }
 
 export function validateConfig(src: ConfigYaml): { success: boolean, errors: string } {
@@ -50,8 +60,18 @@ export function validateConfig(src: ConfigYaml): { success: boolean, errors: str
       if (typeof job.if !== 'string') {
         errors.push('jobs.<job_id>.if must be a string')
       }
-      if (typeof job.do !== 'string' && !Array.isArray(job.do)) {
-        errors.push('jobs.<job_id>.do must be a string or an array')
+      if (!Array.isArray(job.steps)) {
+        errors.push('jobs.<job_id>.steps must be an array')
+      } else {
+        for (let stepIdx = 0; stepIdx < job.steps.length; stepIdx++) {
+          const step = job.steps[stepIdx]
+          if (step.if !== undefined && typeof step.if !== 'string') {
+            errors.push(`jobs.<job_id>.steps[${stepIdx}].if must be a string`)
+          }
+          if (typeof step.run !== 'string') {
+            errors.push(`jobs.<job_id>.steps[${stepIdx}].run must be a string`)
+          }
+        }
       }
     }
   }
@@ -87,10 +107,20 @@ export function parseConfig(filename: string, content: string): Configuration {
   const jobs: Record<JobId, Job> = {}
   for (const jobId in src.jobs) {
     const job = src.jobs[jobId]
+    const steps = [] as Step[]
+    for (let stepIdx = 0; stepIdx < job.steps.length; stepIdx++) {
+      const step = job.steps[stepIdx]
+      steps.push({
+        name: step.name || `Step ${stepIdx + 1}`,
+        if: step.if,
+        run: step.run.trim().split('\n').map(line => line.trim())
+      })
+    }
+
     jobs[jobId] = {
       name: job.name,
       if: job.if,
-      do: job.do.trim().split('\n').map(line => line.trim())
+      steps,
     }
   }
 
@@ -134,7 +164,7 @@ export async function loadConfig(path: string) {
       throw new Error('Invalid config path')
     }
   } catch (e) {
-    throw new Error('Invalid config path')
+    throw new Error('Invalid configuration')
   }
 
   configurations.splice(0, configurations.length) // clear
