@@ -1,15 +1,12 @@
-import { getNewPagesFromDatabase, setPageProperty } from "./notion/notion.js"
+import { loadConfig, getConfigIndex } from "./config.js"
+import { runWorkflow } from "./runner.js"
 
-const databaseId = process.env.DATABASE_ID
+const configPath = process.env.CONFIG_PATH || 'nodop'
 
 async function main() {
-  const pages = await getNewPagesFromDatabase(databaseId)
-  for (const page of pages) {
-    const statusProperty = page.properties['Status']
-    if (statusProperty.type == 'select' && statusProperty.select === null) {
-      setPageProperty(page.id, 'Status', 'TODO')
-    }
-  }
+  await loadConfig(configPath)
+  const index = getConfigIndex()
+  await runWorkflow(index)
 }
 
 main()
