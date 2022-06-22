@@ -48,6 +48,7 @@ async function saveCache(cacheDir?: string) {
   }
   const cachePath = path.join(cacheDir, 'cache.json')
   const cacheData = JSON.stringify({
+    pid: cache.running ? process.pid : undefined,
     running: cache.running,
     lastTimestamp: cache.lastTimestamp
   })
