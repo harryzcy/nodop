@@ -62,6 +62,18 @@ Name of the job.
 
 The conditions under which the job will be run.
 
-### `jobs.<job_id>.do`
+### `jobs.<job_id>.steps`
 
-The actions that performs on matched Notion pages.
+The steps that performs on matched Notion page.
+
+### `jobs.<job_id>.steps[*].name`
+
+The name of the current step.
+
+### `jobs.<job_id>.steps[*].if`
+
+The if condition for the current step. If the condition is not satisfied, the job will be aborted and the remaining steps will not be executed.
+
+### `jobs.<job_id>.steps[*].run`
+
+The expressions to execute on the matched Notion page.
