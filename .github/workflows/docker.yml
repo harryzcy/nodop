@@ -3,11 +3,26 @@ name: Docker CI
 on: [push, pull_request]
 
 jobs:
-  build:
+  alpine:
+    name: Build alpine
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
-
       - name: Build Docker Image
         run: docker build -t nodop:alpine -f docker/Dockerfile.alpine .
+
+  bullseye:
+    name: Build bullseye
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build Docker Image
+        run: docker build -t nodop:bullseye -f docker/Dockerfile.bullseye .
+
+  buster:
+    name: Build buster
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build Docker Image
+        run: docker build -t nodop:buster -f docker/Dockerfile.buster .
