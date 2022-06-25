@@ -1,7 +1,12 @@
+import util from 'util'
+import child_process from 'child_process'
 import { getNewPagesFromDatabase } from "./notion/notion.js"
 import { Configuration, ConfigurationIndex, Job } from "./config.js"
 import { Page } from "./notion/typing.js"
 import { evaluate } from "./expression/expr.js"
+
+// exec is a function that executes a bash command
+const exec = util.promisify(child_process.exec)
 
 const CHECK_INTERVAL = 30 // seconds
 
@@ -64,8 +69,15 @@ async function runJobOnPage(page: Page, job: Job) {
     const condition = step.if ? await evaluate(page, step.if) : true
     if (!condition) break
 
-    for (const line of step.run) {
-      await evaluate(page, line)
+    if (step.lang === 'bash') {
+      const commands = step.run.join('\\\n')
+      const { stdout, stderr } = await exec(commands)
+      if (stdout) console.log('stdout:', stdout)
+      if (stderr) console.error('stderr:', stderr)
+    } else {
+      for (const line of step.run) {
+        await evaluate(page, line)
+      }
     }
   }
 }
