@@ -8,7 +8,7 @@ import { evaluate } from './expression/expr.js'
 // exec is a function that executes a bash command
 const exec = util.promisify(child_process.exec)
 
-const CHECK_INTERVAL = 2 // seconds
+const CHECK_INTERVAL = 30 // seconds
 
 let shouldStop = false
 const stopDaemon = () => {
