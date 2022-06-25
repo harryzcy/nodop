@@ -1,6 +1,6 @@
-import { Client } from "@notionhq/client"
-import { Page, PartialPage } from "./typing.js"
-import cache from "../cache.js"
+import { Client } from '@notionhq/client'
+import { Page, PartialPage } from './typing.js'
+import cache from '../cache.js'
 
 export const notion = new Client({ auth: process.env.NOTION_KEY })
 
@@ -32,7 +32,10 @@ async function getLastISOTime() {
   return iso
 }
 
-export async function getNewPagesFromDatabase(databaseId: string, events: Set<string> = null): Promise<Array<Page>> {
+export async function getNewPagesFromDatabase(
+  databaseId: string,
+  events: Set<string> = null,
+): Promise<Array<Page>> {
   // TODO: use an in-memory store to avoid duplicates
 
   let nextCursor: string | null | undefined = undefined
@@ -63,16 +66,20 @@ export async function getNewPagesFromDatabase(databaseId: string, events: Set<st
   })
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function setPageProperty(pageId: string, propertyName: string, value: any) {
+export async function setPageProperty(
+  pageId: string,
+  propertyName: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  value: any,
+) {
   await notion.pages.update({
     page_id: pageId,
     properties: {
       [propertyName]: {
         select: {
           name: value,
-        }
-      }
-    }
+        },
+      },
+    },
   })
 }

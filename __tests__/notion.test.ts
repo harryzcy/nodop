@@ -8,9 +8,13 @@ describe('notion client', () => {
 
 describe('eventsContainsOnly', () => {
   it('returns true if events contains only types', () => {
-    expect(eventsContainsOnly(new Set(['create']), 'create', 'update')).toBe(true)
+    expect(eventsContainsOnly(new Set(['create']), 'create', 'update')).toBe(
+      true,
+    )
 
-    expect(eventsContainsOnly(new Set(['create', 'update']), 'create', 'update')).toBe(true)
+    expect(
+      eventsContainsOnly(new Set(['create', 'update']), 'create', 'update'),
+    ).toBe(true)
   })
 
   it('returns false if events contains other types', () => {

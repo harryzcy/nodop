@@ -1,11 +1,13 @@
 import * as fs from 'fs'
 import {
-  ConfigYaml, validateConfig,
+  ConfigYaml,
+  validateConfig,
   parseConfig,
   readConfigFile,
   loadConfig,
   getAllConfigs,
-  getConfigIndex, Configuration
+  getConfigIndex,
+  Configuration,
 } from '../src/config.js'
 
 describe('validateConfig', () => {
@@ -16,8 +18,12 @@ describe('validateConfig', () => {
       on: ['create', 'update'],
       jobs: {
         job1: { name: 'job1', if: 'if1', steps: [{ run: 'command1' }] },
-        job2: { name: 'job2', if: 'if2', steps: [{ run: 'command2\ncommand3' }] }
-      }
+        job2: {
+          name: 'job2',
+          if: 'if2',
+          steps: [{ run: 'command2\ncommand3' }],
+        },
+      },
     }
     const { success, errors } = validateConfig(config)
 
@@ -30,7 +36,7 @@ describe('validateConfig', () => {
       name: 'config',
       target: ['databaseId1', 'databaseId2'],
       on: ['create', 'update'],
-      jobs: { job1: { name: 'job1', if: 'if1', steps: [{ run: 'command1' }] } }
+      jobs: { job1: { name: 'job1', if: 'if1', steps: [{ run: 'command1' }] } },
     }
     const { success, errors } = validateConfig(config)
     expect(success).toBe(true)
@@ -42,7 +48,7 @@ describe('validateConfig', () => {
       name: 'config',
       target: ['databaseId1', 'databaseId2'],
       on: 'create',
-      jobs: { job1: { name: 'job1', if: 'if1', steps: [{ run: 'command1' }] } }
+      jobs: { job1: { name: 'job1', if: 'if1', steps: [{ run: 'command1' }] } },
     }
     const { success, errors } = validateConfig(config)
     expect(success).toBe(true)
@@ -53,7 +59,7 @@ describe('validateConfig', () => {
     const config: ConfigYaml = {
       target: ['databaseId1', 'databaseId2'],
       on: 'create',
-      jobs: { job1: { name: 'job1', if: 'if1', steps: [{ run: 'command1' }] } }
+      jobs: { job1: { name: 'job1', if: 'if1', steps: [{ run: 'command1' }] } },
     }
     const { success, errors } = validateConfig(config)
     expect(success).toBe(true)
@@ -64,7 +70,7 @@ describe('validateConfig', () => {
     const config: ConfigYaml = {
       target: ['databaseId1', 'databaseId2'],
       on: 'create',
-      jobs: { job1: { if: 'if1', steps: [{ run: 'command1' }] } }
+      jobs: { job1: { if: 'if1', steps: [{ run: 'command1' }] } },
     }
     const { success, errors } = validateConfig(config)
     expect(success).toBe(true)
@@ -76,8 +82,14 @@ describe('validateConfig', () => {
       target: ['databaseId1', 'databaseId2'],
       on: 'create',
       jobs: {
-        job1: { if: 'if1', steps: [{ lang: 'bash', run: 'command1' }, { lang: 'builtin', run: 'command2' }] },
-      }
+        job1: {
+          if: 'if1',
+          steps: [
+            { lang: 'bash', run: 'command1' },
+            { lang: 'builtin', run: 'command2' },
+          ],
+        },
+      },
     }
     const { success, errors } = validateConfig(config)
     expect(success).toBe(true)
@@ -89,7 +101,7 @@ describe('validateConfig', () => {
       name: 1,
       target: ['databaseId1', 'databaseId2'],
       on: 'create',
-      jobs: { job1: { if: 'if1', steps: [{ run: 'command1' }] } }
+      jobs: { job1: { if: 'if1', steps: [{ run: 'command1' }] } },
     }
     const { success, errors } = validateConfig(config)
     expect(success).toBe(false)
@@ -99,7 +111,7 @@ describe('validateConfig', () => {
   it('invalid config, no db', () => {
     const config: ConfigYaml = {
       on: 'create',
-      jobs: { job1: { name: 'job1', if: 'if1', steps: [{ run: 'command1' }] } }
+      jobs: { job1: { name: 'job1', if: 'if1', steps: [{ run: 'command1' }] } },
     }
     const { success, errors } = validateConfig(config)
     expect(success).toBe(false)
@@ -109,7 +121,7 @@ describe('validateConfig', () => {
   it('invalid config, no on', () => {
     const config: ConfigYaml = {
       target: ['databaseId1', 'databaseId2'],
-      jobs: { job1: { name: 'job1', if: 'if1', steps: [{ run: 'command1' }] } }
+      jobs: { job1: { name: 'job1', if: 'if1', steps: [{ run: 'command1' }] } },
     }
     const { success, errors } = validateConfig(config)
     expect(success).toBe(false)
@@ -130,22 +142,32 @@ describe('validateConfig', () => {
     const config: ConfigYaml = {
       target: ['databaseId1', 'databaseId2'],
       on: 'create',
-      jobs: { job1: { name: 'job1', if: 'if1', steps: [{ lang: 'invalid', run: 'command1' }] } }
+      jobs: {
+        job1: {
+          name: 'job1',
+          if: 'if1',
+          steps: [{ lang: 'invalid', run: 'command1' }],
+        },
+      },
     }
     const { success, errors } = validateConfig(config)
     expect(success).toBe(false)
-    expect(errors).toBe('jobs.<job_id>.steps[0].lang must be either "bash" or "builtin"')
+    expect(errors).toBe(
+      'jobs.<job_id>.steps[0].lang must be either "bash" or "builtin"',
+    )
   })
 
   it('invalid config, invalid job.if and job.do', () => {
     const config: ConfigYaml = {
       target: ['databaseId1', 'databaseId2'],
       on: 'create',
-      jobs: { job1: {} }
+      jobs: { job1: {} },
     }
     const { success, errors } = validateConfig(config)
     expect(success).toBe(false)
-    expect(errors).toBe('jobs.<job_id>.if must be a string, jobs.<job_id>.steps must be an array')
+    expect(errors).toBe(
+      'jobs.<job_id>.if must be a string, jobs.<job_id>.steps must be an array',
+    )
   })
 })
 
@@ -170,14 +192,18 @@ describe('parseConfig', () => {
       on: ['create'],
       jobs: {
         job1: {
-          name: 'job1', if: 'if1', steps: [{
-            name: 'step1',
-            if: undefined,
-            lang: 'builtin',
-            run: ['command1']
-          }]
-        }
-      }
+          name: 'job1',
+          if: 'if1',
+          steps: [
+            {
+              name: 'step1',
+              if: undefined,
+              lang: 'builtin',
+              run: ['command1'],
+            },
+          ],
+        },
+      },
     })
   })
 
@@ -211,26 +237,33 @@ describe('parseConfig', () => {
       on: ['create', 'update'],
       jobs: {
         job1: {
-          name: 'job_name1', if: 'if1', steps: [{
-            name: 'step1',
-            lang: 'builtin',
-            run: ['command1']
-          }]
+          name: 'job_name1',
+          if: 'if1',
+          steps: [
+            {
+              name: 'step1',
+              lang: 'builtin',
+              run: ['command1'],
+            },
+          ],
         },
         job2: {
-          name: 'job_name2', if: 'if2', steps: [
+          name: 'job_name2',
+          if: 'if2',
+          steps: [
             {
               name: 'Step 1',
               lang: 'builtin',
-              run: ['command2', 'command3']
+              run: ['command2', 'command3'],
             },
             {
               name: 'Step 2',
               lang: 'builtin',
-              run: ['command4 --arg value']
-            }]
-        }
-      }
+              run: ['command4 --arg value'],
+            },
+          ],
+        },
+      },
     })
   })
 
@@ -253,14 +286,18 @@ describe('readConfigFile', () => {
       on: ['create', 'update'],
       jobs: {
         job1: {
-          name: 'job1', if: 'if_statement', steps: [{
-            name: 'step1',
-            if: "if_in_step1",
-            lang: 'builtin',
-            run: ['echo "step1"']
-          }]
+          name: 'job1',
+          if: 'if_statement',
+          steps: [
+            {
+              name: 'step1',
+              if: 'if_in_step1',
+              lang: 'builtin',
+              run: ['echo "step1"'],
+            },
+          ],
         },
-      }
+      },
     })
   })
 })
@@ -277,14 +314,18 @@ describe('loadConfig', () => {
       on: ['create', 'update'],
       jobs: {
         job1: {
-          name: 'job1', if: 'if_statement', steps: [{
-            name: 'step1',
-            if: 'if_in_step1',
-            lang: 'builtin',
-            run: ['echo "step1"']
-          }]
+          name: 'job1',
+          if: 'if_statement',
+          steps: [
+            {
+              name: 'step1',
+              if: 'if_in_step1',
+              lang: 'builtin',
+              run: ['echo "step1"'],
+            },
+          ],
         },
-      }
+      },
     })
   })
 
@@ -299,14 +340,18 @@ describe('loadConfig', () => {
       on: ['create', 'update'],
       jobs: {
         job1: {
-          name: 'job1', if: 'if_statement', steps: [{
-            name: 'step1',
-            if: 'if_in_step1',
-            lang: 'builtin',
-            run: ['echo "step1"']
-          }]
+          name: 'job1',
+          if: 'if_statement',
+          steps: [
+            {
+              name: 'step1',
+              if: 'if_in_step1',
+              lang: 'builtin',
+              run: ['echo "step1"'],
+            },
+          ],
         },
-      }
+      },
     })
   })
 
@@ -342,20 +387,24 @@ describe('getConfigIndex', () => {
           set_todo: {
             name: 'set_todo',
             if: "is_empty(property('Status'))",
-            steps: [{
-              name: 'set_todo',
-              lang: 'builtin',
-              run: ["set_property('Status', 'TODO')"]
-            }]
+            steps: [
+              {
+                name: 'set_todo',
+                lang: 'builtin',
+                run: ["set_property('Status', 'TODO')"],
+              },
+            ],
           },
-        }
-      }
+        },
+      },
     ]
     setConfigs(configs)
 
     const index = getConfigIndex()
     expect(Object.keys(index)).toHaveLength(1)
-    expect(index['443f14fe1a63a1724a1dc63ce0a5d202'].on).toEqual(new Set(['create', 'update']))
+    expect(index['443f14fe1a63a1724a1dc63ce0a5d202'].on).toEqual(
+      new Set(['create', 'update']),
+    )
     expect(index['443f14fe1a63a1724a1dc63ce0a5d202'].configs).toHaveLength(1)
     expect(index['443f14fe1a63a1724a1dc63ce0a5d202'].configs).toEqual(configs)
   })
@@ -374,15 +423,18 @@ describe('getConfigIndex', () => {
               {
                 name: 'step 1',
                 lang: 'builtin',
-                run: ["set_property('Status', 'TODO')"]
-              }
-            ]
+                run: ["set_property('Status', 'TODO')"],
+              },
+            ],
           },
-        }
+        },
       },
       {
         name: 'config-2',
-        target: ['443f14fe1a63a1724a1dc63ce0a5d202', '443f14fe1a63a1724a1dc63ce0a5d203'],
+        target: [
+          '443f14fe1a63a1724a1dc63ce0a5d202',
+          '443f14fe1a63a1724a1dc63ce0a5d203',
+        ],
         on: ['create'],
         jobs: {
           set_todo: {
@@ -392,26 +444,38 @@ describe('getConfigIndex', () => {
               {
                 name: 'step 1',
                 lang: 'builtin',
-                run: ["set_property('Field', 'foo')"]
-              }
-            ]
+                run: ["set_property('Field', 'foo')"],
+              },
+            ],
           },
-        }
-      }
+        },
+      },
     ]
     setConfigs(configs)
 
     const index = getConfigIndex()
     expect(Object.keys(index)).toHaveLength(2)
-    expect(index['443f14fe1a63a1724a1dc63ce0a5d202'].on).toEqual(new Set(['create', 'update']))
-    expect(index['443f14fe1a63a1724a1dc63ce0a5d203'].on).toEqual(new Set(['create']))
+    expect(index['443f14fe1a63a1724a1dc63ce0a5d202'].on).toEqual(
+      new Set(['create', 'update']),
+    )
+    expect(index['443f14fe1a63a1724a1dc63ce0a5d203'].on).toEqual(
+      new Set(['create']),
+    )
 
     expect(index['443f14fe1a63a1724a1dc63ce0a5d202'].configs).toHaveLength(2)
-    expect(index['443f14fe1a63a1724a1dc63ce0a5d202'].configs).toContainEqual(configs[0])
-    expect(index['443f14fe1a63a1724a1dc63ce0a5d202'].configs).toContainEqual(configs[1])
+    expect(index['443f14fe1a63a1724a1dc63ce0a5d202'].configs).toContainEqual(
+      configs[0],
+    )
+    expect(index['443f14fe1a63a1724a1dc63ce0a5d202'].configs).toContainEqual(
+      configs[1],
+    )
 
     expect(index['443f14fe1a63a1724a1dc63ce0a5d203'].configs).toHaveLength(1)
-    expect(index['443f14fe1a63a1724a1dc63ce0a5d203'].configs).toContainEqual(configs[1])
-    expect(index['443f14fe1a63a1724a1dc63ce0a5d203'].configs).not.toContainEqual(configs[0])
+    expect(index['443f14fe1a63a1724a1dc63ce0a5d203'].configs).toContainEqual(
+      configs[1],
+    )
+    expect(
+      index['443f14fe1a63a1724a1dc63ce0a5d203'].configs,
+    ).not.toContainEqual(configs[0])
   })
 })

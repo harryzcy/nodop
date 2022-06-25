@@ -1,8 +1,8 @@
 /**
  * Grammar
- * 
+ *
  * Expression ::= Identifier ( ArgumentList? ) // CallExpression
-*               | ( Expression )               // GroupExpression
+ *               | ( Expression )               // GroupExpression
  *              | Expression biop Expression   // BinaryExpression
  *              | uniop Expression             // UnaryExpression
  *              | Expression.Identifier        // MemberExpression
@@ -14,50 +14,59 @@
  * String ::= ".*"
  */
 
-import { Scanner, Token, TokenType } from "./scanner.js"
+import { Scanner, Token, TokenType } from './scanner.js'
 
-export type Expression = CallExpression | MemberExpression | GroupExpression | BinaryExpression | UnaryExpression | Literal;
+export type Expression =
+  | CallExpression
+  | MemberExpression
+  | GroupExpression
+  | BinaryExpression
+  | UnaryExpression
+  | Literal
 
 export type CallExpression = {
-  type: 'call_expression';
-  func: string;
-  args: Expression[];
+  type: 'call_expression'
+  func: string
+  args: Expression[]
 }
 
 export type MemberExpression = {
-  type: 'member_expression';
-  expr: Expression;
-  member: string;
+  type: 'member_expression'
+  expr: Expression
+  member: string
 }
 
 export type GroupExpression = {
-  type: 'group_expression';
-  expr: Expression;
+  type: 'group_expression'
+  expr: Expression
 }
 
 export type BinaryExpression = {
-  type: 'binary_expression';
-  left: Expression;
-  right: Expression;
-  operator: TokenType; // &&, ||
+  type: 'binary_expression'
+  left: Expression
+  right: Expression
+  operator: TokenType // &&, ||
 }
 
 export type UnaryExpression = {
-  type: 'unary_expression';
-  operator: TokenType; // !
-  expr: Expression;
+  type: 'unary_expression'
+  operator: TokenType // !
+  expr: Expression
 }
 
-export type Literal = {
-  type: "string"
-  value: string
-} | {
-  type: "boolean"
-  value: boolean
-} | {
-  type: "number"
-  value: number
-}
+export type Literal =
+  | {
+      type: 'string'
+      value: string
+    }
+  | {
+      type: 'boolean'
+      value: boolean
+    }
+  | {
+      type: 'number'
+      value: number
+    }
 
 export class Parser {
   scanner: Scanner
@@ -85,7 +94,7 @@ export class Parser {
         type: 'binary_expression',
         left: e,
         right: right,
-        operator: op.type()
+        operator: op.type(),
       }
     }
     return e
@@ -100,7 +109,7 @@ export class Parser {
         type: 'binary_expression',
         left: e,
         right: right,
-        operator: op.type()
+        operator: op.type(),
       }
     }
     return e
@@ -108,14 +117,17 @@ export class Parser {
 
   parseEqualityExpression(): Expression {
     let e = this.parseRelationalExpression()
-    while (this.currentToken.type() === TokenType.EQUAL || this.currentToken.type() === TokenType.NOT_EQUAL) {
+    while (
+      this.currentToken.type() === TokenType.EQUAL ||
+      this.currentToken.type() === TokenType.NOT_EQUAL
+    ) {
       const op = this.takeIt()
       const right = this.parseRelationalExpression()
       e = {
         type: 'binary_expression',
         left: e,
         right: right,
-        operator: op.type()
+        operator: op.type(),
       }
     }
     return e
@@ -123,17 +135,19 @@ export class Parser {
 
   parseRelationalExpression(): Expression {
     let e = this.parseUnaryExpression()
-    while (this.currentToken.type() === TokenType.LESS_THAN ||
+    while (
+      this.currentToken.type() === TokenType.LESS_THAN ||
       this.currentToken.type() === TokenType.LESS_OR_EQUAL ||
       this.currentToken.type() === TokenType.GREATER_THAN ||
-      this.currentToken.type() === TokenType.GREATER_OR_EQUAL) {
+      this.currentToken.type() === TokenType.GREATER_OR_EQUAL
+    ) {
       const op = this.takeIt()
       const right = this.parseUnaryExpression()
       e = {
         type: 'binary_expression',
         left: e,
         right: right,
-        operator: op.type()
+        operator: op.type(),
       }
     }
     return e
@@ -146,7 +160,7 @@ export class Parser {
       return {
         type: 'unary_expression',
         expr,
-        operator: op.type()
+        operator: op.type(),
       }
     } else {
       return this.parseUnitExpression()
@@ -163,17 +177,17 @@ export class Parser {
       case TokenType.BOOLEAN:
         return {
           type: 'boolean',
-          value: this.takeIt().value() === 'true'
+          value: this.takeIt().value() === 'true',
         }
       case TokenType.NUM:
         return {
           type: 'number',
-          value: parseFloat(this.takeIt().value())
+          value: parseFloat(this.takeIt().value()),
         }
       case TokenType.STRING:
         return {
           type: 'string',
-          value: this.takeIt().value()
+          value: this.takeIt().value(),
         }
       // identifier
       case TokenType.IDENTIFIER:
@@ -184,7 +198,7 @@ export class Parser {
         return {
           type: 'call_expression',
           func,
-          args
+          args,
         }
       // group expression
       case TokenType.LEFT_PAREN:
@@ -193,7 +207,7 @@ export class Parser {
         this.take(TokenType.RIGHT_PAREN)
         return {
           type: 'group_expression',
-          expr
+          expr,
         }
       // member expression
       default:
@@ -202,7 +216,7 @@ export class Parser {
         return {
           type: 'member_expression',
           expr,
-          member: this.take(TokenType.IDENTIFIER).value()
+          member: this.take(TokenType.IDENTIFIER).value(),
         }
     }
   }
@@ -227,7 +241,9 @@ export class Parser {
 
   take(expected: TokenType): Token {
     if (this.currentToken.type() !== expected) {
-      throw new Error(`Expected ${expected}, but got ${this.currentToken.type()}`)
+      throw new Error(
+        `Expected ${expected}, but got ${this.currentToken.type()}`,
+      )
     }
     return this.takeIt()
   }

@@ -1,29 +1,29 @@
 export enum TokenType {
-  NUM,              // [0-9]+
-  BOOLEAN,          // true or false
-  STRING,           // "string" or 'string'
-  NULL,             // null
+  NUM, // [0-9]+
+  BOOLEAN, // true or false
+  STRING, // "string" or 'string'
+  NULL, // null
 
-  IDENTIFIER,       // [a-zA-Z][a-zA-Z0-9_]*
+  IDENTIFIER, // [a-zA-Z][a-zA-Z0-9_]*
 
-  LESS_THAN,        // <
-  LESS_OR_EQUAL,    // <=
-  GREATER_THAN,     // >
+  LESS_THAN, // <
+  LESS_OR_EQUAL, // <=
+  GREATER_THAN, // >
   GREATER_OR_EQUAL, // >=
-  EQUAL,            // ==
-  NOT_EQUAL,        // !=
-  NOT,              // !
-  AND,              // &&
-  OR,               // ||
+  EQUAL, // ==
+  NOT_EQUAL, // !=
+  NOT, // !
+  AND, // &&
+  OR, // ||
 
-  DOT,              // .
-  LEFT_PAREN,       // (
-  RIGHT_PAREN,      // )
-  LEFT_BRACKET,     // [
-  RIGHT_BRACKET,    // ]
-  COMMA,            // ,
+  DOT, // .
+  LEFT_PAREN, // (
+  RIGHT_PAREN, // )
+  LEFT_BRACKET, // [
+  RIGHT_BRACKET, // ]
+  COMMA, // ,
 
-  EOT,              // end of token
+  EOT, // end of token
 }
 
 export class Token {
@@ -61,7 +61,7 @@ export class Scanner {
       this.advance()
     }
 
-    this.currentSpelling = ""
+    this.currentSpelling = ''
     const type = this.scanToken()
     return new Token(type, this.currentSpelling)
   }
@@ -139,7 +139,14 @@ export class Scanner {
 
   isOperator(): boolean {
     const char = this.currentChar
-    return char === '<' || char === '>' || char === '=' || char === '!' || char === '|' || char === '&'
+    return (
+      char === '<' ||
+      char === '>' ||
+      char === '=' ||
+      char === '!' ||
+      char === '|' ||
+      char === '&'
+    )
   }
 
   scanOperator(): TokenType {
@@ -198,8 +205,10 @@ export class Scanner {
 
   scanNumber(): TokenType {
     this.takeIt()
-    while (!this.isTokenEnded() || this.currentChar === '.') { // . is for floating point
-      if (!this.isDigit()) { // must check isDigit before takeIt.
+    while (!this.isTokenEnded() || this.currentChar === '.') {
+      // . is for floating point
+      if (!this.isDigit()) {
+        // must check isDigit before takeIt.
         throw new Error(`Invalid number: ${this.currentSpelling}`)
       }
       this.takeIt()
@@ -214,7 +223,11 @@ export class Scanner {
   scanString(): TokenType {
     const quote = this.currentChar
     this.advance() // skip quote
-    while (this.currentChar !== quote && !this.isEOT() && this.currentChar !== '\n') {
+    while (
+      this.currentChar !== quote &&
+      !this.isEOT() &&
+      this.currentChar !== '\n'
+    ) {
       if (this.currentChar === '\\') {
         this.advance() // skip escape character
         this.takeIt() // take escaped character
@@ -229,8 +242,10 @@ export class Scanner {
   }
 
   isAlphabet(): boolean {
-    return (this.currentChar >= 'a' && this.currentChar <= 'z') ||
+    return (
+      (this.currentChar >= 'a' && this.currentChar <= 'z') ||
       (this.currentChar >= 'A' && this.currentChar <= 'Z')
+    )
   }
 
   scanIdentifierOrLiteral(): TokenType {
@@ -239,10 +254,10 @@ export class Scanner {
       this.takeIt()
     }
 
-    if (this.currentSpelling === "true" || this.currentSpelling === "false") {
+    if (this.currentSpelling === 'true' || this.currentSpelling === 'false') {
       return TokenType.BOOLEAN
     }
-    if (this.currentSpelling === "null") {
+    if (this.currentSpelling === 'null') {
       return TokenType.NULL
     }
 
