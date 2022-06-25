@@ -23,6 +23,6 @@
     "src/*.ts",
     "src/**/*.ts",
     "__tests__/*.ts",
-    "__tests__/**/*.ts",
+    "__tests__/**/*.ts"
   ]
 }
