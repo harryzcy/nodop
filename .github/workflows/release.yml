@@ -71,6 +71,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push
+        if: github.event_name == 'push'
         uses: docker/build-push-action@v3
         with:
           context: .
