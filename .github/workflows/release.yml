@@ -74,7 +74,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          file: ${{ matrix.DOCKERFILE_NAME }}
+          file: ${{ env.DOCKERFILE_NAME }}
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
           tags: ${{ env.IMAGE_TAGS }}
