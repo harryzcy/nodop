@@ -3,9 +3,6 @@
   "version": "0.0.0",
   "description": "Notion Database Operator",
   "type": "module",
-  "engines": {
-    "node": ">= 16.13 <17"
-  },
   "homepage": "https://github.com/harryzcy/nodop#readme",
   "scripts": {
     "start": "node build/src/main.js",
