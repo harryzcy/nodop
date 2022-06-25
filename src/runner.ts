@@ -8,7 +8,7 @@ import { evaluate } from "./expression/expr.js"
 // exec is a function that executes a bash command
 const exec = util.promisify(child_process.exec)
 
-const CHECK_INTERVAL = 30 // seconds
+const CHECK_INTERVAL = 2 // seconds
 
 let shouldStop = false
 const stopDaemon = () => {
@@ -62,7 +62,7 @@ async function runWorkflowForDB(databaseId: string, on: Set<string>, configs: Co
 }
 
 async function runJobOnPage(page: Page, job: Job) {
-  const condition = await evaluate(page, job.if)
+  const condition = job.if ? await evaluate(page, job.if) : true
   if (!condition) return
 
   for (const step of job.steps) {
