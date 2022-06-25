@@ -4,9 +4,9 @@ Workflows is a set of YAML files, each consisting one or multiple rules that ope
 
 ## Syntax
 
-The workflows syntax mimics that of Github Actions.
+The workflows syntax mimics that of GitHub Actions.
 
-### `name`
+### `name`gst
 
 The name of the workflow.
 
