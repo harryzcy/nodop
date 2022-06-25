@@ -16,6 +16,7 @@ export interface ConfigYaml {
     steps?: Array<{
       name?: string
       if?: string
+      lang?: string
       run?: string
     }>
   }>
@@ -37,6 +38,7 @@ export interface Job {
 export interface Step {
   name: string;
   if?: string;
+  lang: string; // bash or builtin
   run: string[];
 }
 
@@ -67,6 +69,11 @@ export function validateConfig(src: ConfigYaml): { success: boolean, errors: str
           const step = job.steps[stepIdx]
           if (step.if !== undefined && typeof step.if !== 'string') {
             errors.push(`jobs.<job_id>.steps[${stepIdx}].if must be a string`)
+          }
+          if (step.lang) {
+            if (step.lang !== 'bash' && step.lang !== 'builtin') {
+              errors.push(`jobs.<job_id>.steps[${stepIdx}].lang must be either "bash" or "builtin"`)
+            }
           }
           if (typeof step.run !== 'string') {
             errors.push(`jobs.<job_id>.steps[${stepIdx}].run must be a string`)
@@ -113,6 +120,7 @@ export function parseConfig(filename: string, content: string): Configuration {
       steps.push({
         name: step.name || `Step ${stepIdx + 1}`,
         if: step.if,
+        lang: step.lang || 'builtin',
         run: step.run.trim().split('\n').map(line => line.trim())
       })
     }
