@@ -74,6 +74,10 @@ The name of the current step.
 
 The if condition for the current step. If the condition is not satisfied, the job will be aborted and the remaining steps will not be executed.
 
+### `jobs.<job_id>.steps[*].lang`
+
+(Optional) Language for `run`, should be either `bash` or `builtin` (default).
+
 ### `jobs.<job_id>.steps[*].run`
 
 The expressions to execute on the matched Notion page.
