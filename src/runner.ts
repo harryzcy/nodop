@@ -1,9 +1,9 @@
 import util from 'util'
 import child_process from 'child_process'
-import { getNewPagesFromDatabase } from "./notion/notion.js"
-import { Configuration, ConfigurationIndex, Job } from "./config.js"
-import { Page } from "./notion/typing.js"
-import { evaluate } from "./expression/expr.js"
+import { getNewPagesFromDatabase } from './notion/notion.js'
+import { Configuration, ConfigurationIndex, Job } from './config.js'
+import { Page } from './notion/typing.js'
+import { evaluate } from './expression/expr.js'
 
 // exec is a function that executes a bash command
 const exec = util.promisify(child_process.exec)
@@ -34,7 +34,7 @@ export async function runNonStop(index: ConfigurationIndex) {
 }
 
 function sleep(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms))
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 export async function runOnce(index: ConfigurationIndex) {
@@ -48,7 +48,11 @@ export async function runWorkflow(index: ConfigurationIndex) {
   }
 }
 
-async function runWorkflowForDB(databaseId: string, on: Set<string>, configs: Configuration[]) {
+async function runWorkflowForDB(
+  databaseId: string,
+  on: Set<string>,
+  configs: Configuration[],
+) {
   // TODO: handle rate limit
   const pages = await getNewPagesFromDatabase(databaseId, on)
 
@@ -74,7 +78,8 @@ async function runJobOnPage(page: Page, job: Job) {
       const { stdout, stderr } = await exec(commands)
       if (stdout) console.log('stdout:', stdout)
       if (stderr) console.error('stderr:', stderr)
-    } else { // 'builtin'
+    } else {
+      // 'builtin'
       for (const line of step.run) {
         await evaluate(page, line)
       }

@@ -10,39 +10,45 @@ export interface ConfigYaml {
   name?: any
   target?: string[] | string
   on?: string[] | string
-  jobs?: Record<JobId, {
-    name?: string
-    if?: string
-    steps?: Array<{
+  jobs?: Record<
+    JobId,
+    {
       name?: string
       if?: string
-      lang?: string
-      run?: string
-    }>
-  }>
+      steps?: Array<{
+        name?: string
+        if?: string
+        lang?: string
+        run?: string
+      }>
+    }
+  >
 }
 
 export interface Configuration {
-  name: string;
-  target: string[];
-  on: string[];
-  jobs: Record<JobId, Job>;
+  name: string
+  target: string[]
+  on: string[]
+  jobs: Record<JobId, Job>
 }
 
 export interface Job {
-  name?: string;
-  if: string;
-  steps: Step[];
+  name?: string
+  if: string
+  steps: Step[]
 }
 
 export interface Step {
-  name: string;
-  if?: string;
-  lang: string; // bash or builtin
-  run: string[];
+  name: string
+  if?: string
+  lang: string // bash or builtin
+  run: string[]
 }
 
-export function validateConfig(src: ConfigYaml): { success: boolean, errors: string } {
+export function validateConfig(src: ConfigYaml): {
+  success: boolean
+  errors: string
+} {
   const errors = []
   if (src.name && typeof src.name !== 'string') {
     errors.push('name must be a string')
@@ -53,7 +59,11 @@ export function validateConfig(src: ConfigYaml): { success: boolean, errors: str
   if (typeof src.on != 'string' && !Array.isArray(src.on)) {
     errors.push('on must be a string or an array')
   }
-  if (typeof src.jobs !== 'object' || Array.isArray(src.jobs) || src.jobs === null) {
+  if (
+    typeof src.jobs !== 'object' ||
+    Array.isArray(src.jobs) ||
+    src.jobs === null
+  ) {
     errors.push('jobs must be a key-value object')
   }
   if (src.jobs) {
@@ -72,7 +82,9 @@ export function validateConfig(src: ConfigYaml): { success: boolean, errors: str
           }
           if (step.lang) {
             if (step.lang !== 'bash' && step.lang !== 'builtin') {
-              errors.push(`jobs.<job_id>.steps[${stepIdx}].lang must be either "bash" or "builtin"`)
+              errors.push(
+                `jobs.<job_id>.steps[${stepIdx}].lang must be either "bash" or "builtin"`,
+              )
             }
           }
           if (typeof step.run !== 'string') {
@@ -85,7 +97,7 @@ export function validateConfig(src: ConfigYaml): { success: boolean, errors: str
 
   return {
     success: errors.length === 0,
-    errors: errors.join(', ')
+    errors: errors.join(', '),
   }
 }
 
@@ -121,7 +133,10 @@ export function parseConfig(filename: string, content: string): Configuration {
         name: step.name || `Step ${stepIdx + 1}`,
         if: step.if,
         lang: step.lang || 'builtin',
-        run: step.run.trim().split('\n').map(line => line.trim())
+        run: step.run
+          .trim()
+          .split('\n')
+          .map((line) => line.trim()),
       })
     }
 
@@ -136,7 +151,7 @@ export function parseConfig(filename: string, content: string): Configuration {
     name,
     target,
     on,
-    jobs
+    jobs,
   }
 }
 
@@ -162,7 +177,8 @@ export async function loadConfig(path: string) {
     } else if (stats.isDirectory()) {
       const files = await fsPromises.readdir(path)
       for (const file of files) {
-        if (!file.endsWith('.yml') && !file.endsWith('.yaml')) { // only load yml files
+        if (!file.endsWith('.yml') && !file.endsWith('.yaml')) {
+          // only load yml files
           continue
         }
         const filePath = `${path}/${file}`
@@ -184,10 +200,13 @@ export function getAllConfigs() {
 }
 
 export type DatabaseID = string
-export type ConfigurationIndex = Record<DatabaseID, {
-  on: Set<string>
-  configs: Configuration[]
-}>
+export type ConfigurationIndex = Record<
+  DatabaseID,
+  {
+    on: Set<string>
+    configs: Configuration[]
+  }
+>
 
 export function getConfigIndex() {
   const index: ConfigurationIndex = {}
@@ -196,7 +215,7 @@ export function getConfigIndex() {
       if (!index[dbID]) {
         index[dbID] = {
           on: new Set(config.on),
-          configs: [config]
+          configs: [config],
         }
       } else {
         index[dbID].configs.push(config)

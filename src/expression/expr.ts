@@ -1,5 +1,12 @@
 import { Page } from '../notion/typing.js'
-import { CallExpression, MemberExpression, BinaryExpression, UnaryExpression, Expression, Parser } from './parser.js'
+import {
+  CallExpression,
+  MemberExpression,
+  BinaryExpression,
+  UnaryExpression,
+  Expression,
+  Parser,
+} from './parser.js'
 import { TokenType } from './scanner.js'
 import { setPageProperty } from '../notion/notion.js'
 
@@ -67,7 +74,9 @@ async function evalCallExpression(page: Page, e: CallExpression): Promise<any> {
     if (typeof property === 'object') {
       if (property === null) return true
       if ('type' in property) {
-        return property[property.type] === null || property[property.type] === ''
+        return (
+          property[property.type] === null || property[property.type] === ''
+        )
       }
     }
     return property === null || property === ''
@@ -94,8 +103,11 @@ async function evalCallExpression(page: Page, e: CallExpression): Promise<any> {
   throw new Error(`Unknown call expression: ${e.func}`)
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function evalMemberExpression(page: Page, e: MemberExpression): Promise<any> {
+async function evalMemberExpression(
+  page: Page,
+  e: MemberExpression,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): Promise<any> {
   const value = await evalExpression(page, e.expr)
   if (typeof value === 'object') {
     return value[e.member]
@@ -104,8 +116,11 @@ async function evalMemberExpression(page: Page, e: MemberExpression): Promise<an
   throw new Error(`Cannot access member of non-object: ${e.member}`)
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function evalBinaryExpression(page: Page, e: BinaryExpression): Promise<any> {
+async function evalBinaryExpression(
+  page: Page,
+  e: BinaryExpression,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): Promise<any> {
   const left = await evalExpression(page, e.left)
   const right = await evalExpression(page, e.right)
 
@@ -131,8 +146,11 @@ async function evalBinaryExpression(page: Page, e: BinaryExpression): Promise<an
   throw new Error(`Unknown binary expression: ${e.operator}`)
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function evalUnaryExpression(page: Page, e: UnaryExpression): Promise<any> {
+async function evalUnaryExpression(
+  page: Page,
+  e: UnaryExpression,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): Promise<any> {
   const expr = await evalExpression(page, e.expr)
   if (e.operator === TokenType.NOT) {
     return !expr

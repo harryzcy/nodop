@@ -1,4 +1,3 @@
-
 import type { Client } from '@notionhq/client'
 
 type ArrayElement<ArrayType extends readonly unknown[]> =
