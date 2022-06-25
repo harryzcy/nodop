@@ -4,10 +4,13 @@ on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:
 
 jobs:
-  build:
+  release:
+    name: Release on GitHub
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
     permissions:
       contents: write
     steps:
@@ -16,3 +19,62 @@ jobs:
         with:
           name: Release ${{ github.ref_name }}
           token: ${{ secrets.GITHUB_TOKEN }}
+
+  docker:
+    name: Build Docker Image
+    strategy:
+      matrix:
+        base-image: [alpine3.16, bullseye, buster]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up tags
+        uses: actions/github-script@v6
+        env:
+          IMAGE_NAME: harryzcy/nodop
+          BASE_IMAGE: ${{ matrix.base-image }}
+        with:
+          script: |
+            const image_name = process.env.IMAGE_NAME
+            const tag_name = context.eventName == 'push' ? process.env.GITHUB_REF_NAME : 'v0.0.0'
+            const base_image = process.env.BASE_IMAGE
+            const [major, minor, patch] = tag_name.slice(1).split('.')
+            const version_tags = [
+              `${image_name}:${major}`,
+              `${image_name}:${major}.${minor}`,
+              `${image_name}:${major}.${minor}.${patch}`,
+            ]
+            const tags = []
+            if (base_image === 'alpine3.16') {
+              tags.push(...version_tags.map(tag => `${tag}-alpine`))
+              tags.push(...version_tags.map(tag => `${tag}-alpine3.16`))
+              core.exportVariable('DOCKERFILE_NAME', 'docker/Dockerfile.alpine')
+            } else if (base_image === 'bullseye' || base_image === 'buster') {
+              tags.push(...version_tags.map(tag => `${tag}-${base_image}`))
+              core.exportVariable('DOCKERFILE_NAME', `docker/Dockerfile.${base_image}`)
+            } else {
+              process.exit(1)
+            }
+            core.exportVariable('IMAGE_TAGS', tags.join(','))
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: ${{ matrix.DOCKERFILE_NAME }}
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          push: true
+          tags: ${{ env.IMAGE_TAGS }}
