@@ -74,7 +74,7 @@ async function runJobOnPage(page: Page, job: Job) {
       const { stdout, stderr } = await exec(commands)
       if (stdout) console.log('stdout:', stdout)
       if (stderr) console.error('stderr:', stderr)
-    } else {
+    } else { // 'builtin'
       for (const line of step.run) {
         await evaluate(page, line)
       }
