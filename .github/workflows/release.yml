@@ -49,9 +49,14 @@ jobs:
             if (base_image === 'alpine3.16') {
               tags.push(...version_tags.map(tag => `${tag}-alpine`))
               tags.push(...version_tags.map(tag => `${tag}-alpine3.16`))
-              tags.push('alpine', 'alpine3.16', 'latest')
+              tags.push('alpine', 'alpine3.16')
               core.exportVariable('DOCKERFILE_NAME', 'docker/Dockerfile.alpine')
-            } else if (base_image === 'bullseye' || base_image === 'buster') {
+            } else if (base_image === 'bullseye') {
+              tags.push(...version_tags.map(tag => `${tag}-${base_image}`))
+              tags.push(...version_tags)
+              tags.push(base_image, 'latest')
+              core.exportVariable('DOCKERFILE_NAME', `docker/Dockerfile.${base_image}`)
+            } else if (base_image === 'buster') {
               tags.push(...version_tags.map(tag => `${tag}-${base_image}`))
               tags.push(base_image)
               core.exportVariable('DOCKERFILE_NAME', `docker/Dockerfile.${base_image}`)
