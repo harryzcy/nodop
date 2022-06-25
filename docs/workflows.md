@@ -4,9 +4,9 @@ Workflows is a set of YAML files, each consisting one or multiple rules that ope
 
 ## Syntax
 
-The workflows syntax mimics that of Github Actions.
+The workflows syntax mimics that of GitHub Actions.
 
-### `name`
+### `name`gst
 
 The name of the workflow.
 
@@ -73,6 +73,10 @@ The name of the current step.
 ### `jobs.<job_id>.steps[*].if`
 
 The if condition for the current step. If the condition is not satisfied, the job will be aborted and the remaining steps will not be executed.
+
+### `jobs.<job_id>.steps[*].lang`
+
+(Optional) Language for `run`, should be either `bash` or `builtin` (default).
 
 ### `jobs.<job_id>.steps[*].run`
 
