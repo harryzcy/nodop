@@ -71,6 +71,19 @@ describe('validateConfig', () => {
     expect(errors).toBe('')
   })
 
+  it('valid config, with lang', () => {
+    const config: ConfigYaml = {
+      target: ['databaseId1', 'databaseId2'],
+      on: 'create',
+      jobs: {
+        job1: { if: 'if1', steps: [{ lang: 'bash', run: 'command1' }, { lang: 'builtin', run: 'command2' }] },
+      }
+    }
+    const { success, errors } = validateConfig(config)
+    expect(success).toBe(true)
+    expect(errors).toBe('')
+  })
+
   it('invalid config, non string name', () => {
     const config: ConfigYaml = {
       name: 1,
@@ -113,6 +126,17 @@ describe('validateConfig', () => {
     expect(errors).toBe('jobs must be a key-value object')
   })
 
+  it('invalid config, invalid job.steps[*].lang', () => {
+    const config: ConfigYaml = {
+      target: ['databaseId1', 'databaseId2'],
+      on: 'create',
+      jobs: { job1: { name: 'job1', if: 'if1', steps: [{ lang: 'invalid', run: 'command1' }] } }
+    }
+    const { success, errors } = validateConfig(config)
+    expect(success).toBe(false)
+    expect(errors).toBe('jobs.<job_id>.steps[0].lang must be either "bash" or "builtin"')
+  })
+
   it('invalid config, invalid job.if and job.do', () => {
     const config: ConfigYaml = {
       target: ['databaseId1', 'databaseId2'],
@@ -149,6 +173,7 @@ describe('parseConfig', () => {
           name: 'job1', if: 'if1', steps: [{
             name: 'step1',
             if: undefined,
+            lang: 'builtin',
             run: ['command1']
           }]
         }
@@ -188,6 +213,7 @@ describe('parseConfig', () => {
         job1: {
           name: 'job_name1', if: 'if1', steps: [{
             name: 'step1',
+            lang: 'builtin',
             run: ['command1']
           }]
         },
@@ -195,12 +221,12 @@ describe('parseConfig', () => {
           name: 'job_name2', if: 'if2', steps: [
             {
               name: 'Step 1',
-              if: undefined,
+              lang: 'builtin',
               run: ['command2', 'command3']
             },
             {
               name: 'Step 2',
-              if: undefined,
+              lang: 'builtin',
               run: ['command4 --arg value']
             }]
         }
@@ -230,6 +256,7 @@ describe('readConfigFile', () => {
           name: 'job1', if: 'if_statement', steps: [{
             name: 'step1',
             if: "if_in_step1",
+            lang: 'builtin',
             run: ['echo "step1"']
           }]
         },
@@ -253,6 +280,7 @@ describe('loadConfig', () => {
           name: 'job1', if: 'if_statement', steps: [{
             name: 'step1',
             if: 'if_in_step1',
+            lang: 'builtin',
             run: ['echo "step1"']
           }]
         },
@@ -274,6 +302,7 @@ describe('loadConfig', () => {
           name: 'job1', if: 'if_statement', steps: [{
             name: 'step1',
             if: 'if_in_step1',
+            lang: 'builtin',
             run: ['echo "step1"']
           }]
         },
@@ -315,6 +344,7 @@ describe('getConfigIndex', () => {
             if: "is_empty(property('Status'))",
             steps: [{
               name: 'set_todo',
+              lang: 'builtin',
               run: ["set_property('Status', 'TODO')"]
             }]
           },
@@ -343,6 +373,7 @@ describe('getConfigIndex', () => {
             steps: [
               {
                 name: 'step 1',
+                lang: 'builtin',
                 run: ["set_property('Status', 'TODO')"]
               }
             ]
@@ -360,6 +391,7 @@ describe('getConfigIndex', () => {
             steps: [
               {
                 name: 'step 1',
+                lang: 'builtin',
                 run: ["set_property('Field', 'foo')"]
               }
             ]
