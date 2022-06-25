@@ -69,12 +69,23 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and push
+      
+      - name: Build without push
+        if: github.event_name == 'workflow_dispatch'
         uses: docker/build-push-action@v3
         with:
           context: .
           file: ${{ env.DOCKERFILE_NAME }}
           platforms: linux/amd64,linux/arm64,linux/arm/v7
-          push: github.event_name == 'push'
+          push: false
+          tags: ${{ env.IMAGE_TAGS }}
+
+      - name: Build and push
+        if: github.event_name == 'push'
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: ${{ env.DOCKERFILE_NAME }}
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          push: true
           tags: ${{ env.IMAGE_TAGS }}
