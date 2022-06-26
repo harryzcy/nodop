@@ -4,11 +4,12 @@ import { getNewPagesFromDatabase } from './notion/notion.js'
 import { Configuration, ConfigurationIndex, Job } from './config.js'
 import { Page } from './notion/typing.js'
 import { evaluate } from './expression/expr.js'
+import { getIntFromEnv } from './env_setting.js'
 
 // exec is a function that executes a bash command
 const exec = util.promisify(child_process.exec)
 
-const CHECK_INTERVAL = 30 // seconds
+const CHECK_INTERVAL = getIntFromEnv('CHECK_INTERVAL', 30) // seconds
 
 let shouldStop = false
 const stopDaemon = () => {
