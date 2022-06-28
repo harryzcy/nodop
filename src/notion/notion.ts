@@ -32,6 +32,19 @@ async function getLastISOTime() {
   return iso
 }
 
+export class RateLimitedError extends Error {
+  retryAfter: number
+
+  constructor(retryAfter: number) {
+    super('Rate limited')
+    this.retryAfter = retryAfter
+  }
+
+  getRetryAfter() {
+    return this.retryAfter
+  }
+}
+
 export async function getNewPagesFromDatabase(
   databaseId: string,
   events: Set<string> = null,
@@ -62,9 +75,12 @@ export async function getNewPagesFromDatabase(
       pages.push(...response.results)
     } catch (error) {
       if (error.code === APIErrorCode.RateLimited) {
-        // rate limited, return the pages we have so far
-        break
+        // rate limited, raise error
+        // returning pages so far doesn't make sense because any subsequent API calls will fail
+        const retryAfter = Number(error.headers['Retry-After'])
+        throw new RateLimitedError(retryAfter)
       }
+      throw error
     }
   }
 
