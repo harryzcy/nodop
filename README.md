@@ -28,3 +28,17 @@ npm run daemon
 ## Workflow Syntax
 
 Please refer to [workflows doc](docs/workflows.md)
+
+## Additional Configurations
+
+The configurations below are available via environment variables.
+
+### `CONFIG_PATH`
+
+The path to configuration directory or file.
+
+### `CHECK_INTERVAL`
+
+The interval in seconds that Notion database changes will be checked.
+
+Default: 30
