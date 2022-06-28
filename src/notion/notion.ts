@@ -1,4 +1,4 @@
-import { Client } from '@notionhq/client'
+import { Client, APIErrorCode } from '@notionhq/client'
 import { Page, PartialPage } from './typing.js'
 import cache from '../cache.js'
 
@@ -32,6 +32,19 @@ async function getLastISOTime() {
   return iso
 }
 
+export class RateLimitedError extends Error {
+  retryAfter: number
+
+  constructor(retryAfter: number) {
+    super('Rate limited')
+    this.retryAfter = retryAfter
+  }
+
+  getRetryAfter() {
+    return this.retryAfter
+  }
+}
+
 export async function getNewPagesFromDatabase(
   databaseId: string,
   events: Set<string> = null,
@@ -51,14 +64,24 @@ export async function getNewPagesFromDatabase(
 
   const pages: Array<PartialPage> = []
   while (nextCursor !== null) {
-    const response = await notion.databases.query({
-      database_id: databaseId,
-      filter,
-      start_cursor: nextCursor,
-    })
+    try {
+      const response = await notion.databases.query({
+        database_id: databaseId,
+        filter,
+        start_cursor: nextCursor,
+      })
 
-    nextCursor = response.next_cursor
-    pages.push(...response.results)
+      nextCursor = response.next_cursor
+      pages.push(...response.results)
+    } catch (error) {
+      if (error.code === APIErrorCode.RateLimited) {
+        // rate limited, raise error
+        // returning pages so far doesn't make sense because any subsequent API calls will fail
+        const retryAfter = Number(error.headers['Retry-After'])
+        throw new RateLimitedError(retryAfter)
+      }
+      throw error
+    }
   }
 
   return pages.filter((page: PartialPage): page is Page => {
