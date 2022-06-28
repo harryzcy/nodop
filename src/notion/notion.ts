@@ -1,4 +1,4 @@
-import { Client } from '@notionhq/client'
+import { Client, APIErrorCode } from '@notionhq/client'
 import { Page, PartialPage } from './typing.js'
 import cache from '../cache.js'
 
@@ -51,14 +51,21 @@ export async function getNewPagesFromDatabase(
 
   const pages: Array<PartialPage> = []
   while (nextCursor !== null) {
-    const response = await notion.databases.query({
-      database_id: databaseId,
-      filter,
-      start_cursor: nextCursor,
-    })
+    try {
+      const response = await notion.databases.query({
+        database_id: databaseId,
+        filter,
+        start_cursor: nextCursor,
+      })
 
-    nextCursor = response.next_cursor
-    pages.push(...response.results)
+      nextCursor = response.next_cursor
+      pages.push(...response.results)
+    } catch (error) {
+      if (error.code === APIErrorCode.RateLimited) {
+        // rate limited, return the pages we have so far
+        break
+      }
+    }
   }
 
   return pages.filter((page: PartialPage): page is Page => {

@@ -54,7 +54,6 @@ async function runWorkflowForDB(
   on: Set<string>,
   configs: Configuration[],
 ) {
-  // TODO: handle rate limit
   const pages = await getNewPagesFromDatabase(databaseId, on)
 
   for (const config of configs) {
