@@ -242,7 +242,7 @@ export class Parser {
   take(expected: TokenType): Token {
     if (this.currentToken.type() !== expected) {
       throw new Error(
-        `Expected ${expected}, but got ${this.currentToken.type()}`,
+        `Expected ${TokenType[expected]}, but got ${TokenType[this.currentToken.type()]}`,
       )
     }
     return this.takeIt()
