@@ -22,6 +22,7 @@ export type Expression =
   | GroupExpression
   | BinaryExpression
   | UnaryExpression
+  | Identifier
   | Literal
 
 export type CallExpression = {
@@ -32,8 +33,8 @@ export type CallExpression = {
 
 export type MemberExpression = {
   type: 'member_expression'
-  expr: Expression
-  member: string
+  object: Expression
+  property: Expression
 }
 
 export type GroupExpression = {
@@ -56,17 +57,22 @@ export type UnaryExpression = {
 
 export type Literal =
   | {
-      type: 'string'
-      value: string
-    }
+    type: 'string'
+    value: string
+  }
   | {
-      type: 'boolean'
-      value: boolean
-    }
+    type: 'boolean'
+    value: boolean
+  }
   | {
-      type: 'number'
-      value: number
-    }
+    type: 'number'
+    value: number
+  }
+
+export type Identifier = {
+  type: 'identifier'
+  value: string
+}
 
 export class Parser {
   scanner: Scanner
@@ -168,7 +174,7 @@ export class Parser {
   }
 
   parseUnitExpression(): Expression {
-    let func: string // used for call expression
+    let iden: string // identifier for call expression or member expression
     let args: Expression[] // used for call expression
     let expr: Expression // used for group expression or member expression
 
@@ -191,34 +197,62 @@ export class Parser {
         }
       // identifier
       case TokenType.IDENTIFIER:
-        func = this.takeIt().value()
-        this.take(TokenType.LEFT_PAREN)
-        args = this.parseArgumentList()
-        this.take(TokenType.RIGHT_PAREN)
-        return {
-          type: 'call_expression',
-          func,
-          args,
+        iden = this.takeIt().value()
+        switch (this.currentToken.type()) {
+          // call expression
+          case TokenType.LEFT_PAREN:
+            this.takeIt()
+            args = this.parseArgumentList()
+            this.take(TokenType.RIGHT_PAREN)
+            expr = {
+              type: 'call_expression',
+              func: iden,
+              args,
+            }
+            break
+          // member expression
+          case TokenType.DOT:
+            this.takeIt()
+            expr = {
+              type: 'member_expression',
+              object: {
+                type: 'identifier',
+                value: iden,
+              },
+              property: this.parseExpression(),
+            }
+            break
+          // error
+          default:
+            throw new Error(
+              `Expected ${TokenType[TokenType.LEFT_PAREN]} or ${TokenType[TokenType.DOT]}, ` +
+              `but got ${TokenType[this.currentToken.type()]}`,
+            )
         }
+        break
       // group expression
       case TokenType.LEFT_PAREN:
         this.takeIt()
         expr = this.parseExpression()
         this.take(TokenType.RIGHT_PAREN)
-        return {
+        expr = {
           type: 'group_expression',
-          expr,
+          expr: expr,
         }
-      // member expression
+        break
       default:
-        expr = this.parseExpression()
-        this.take(TokenType.DOT)
-        return {
-          type: 'member_expression',
-          expr,
-          member: this.take(TokenType.IDENTIFIER).value(),
-        }
+        throw new Error("Unknown token type")
     }
+
+    if (this.currentToken.type() === TokenType.DOT) {
+      this.takeIt()
+      expr = {
+        type: 'member_expression',
+        object: expr,
+        property: this.parseExpression(),
+      }
+    }
+    return expr
   }
 
   parseArgumentList(): Expression[] {

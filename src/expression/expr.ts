@@ -6,6 +6,7 @@ import {
   UnaryExpression,
   Expression,
   Parser,
+  Identifier,
 } from './parser.js'
 import { TokenType } from './scanner.js'
 import { setPageProperty } from '../notion/notion.js'
@@ -36,6 +37,10 @@ async function evalExpression(page: Page, e: Expression): Promise<any> {
 
   if (e.type === 'unary_expression') {
     return await evalUnaryExpression(page, e)
+  }
+
+  if (e.type === 'identifier') {
+    return evalIdentifier(page, e)
   }
 
   if (e.type === 'boolean' || e.type === 'string' || e.type === 'number') {
@@ -108,12 +113,15 @@ async function evalMemberExpression(
   e: MemberExpression,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
-  const value = await evalExpression(page, e.expr)
+  const value = await evalExpression(page, e.object)
   if (typeof value === 'object') {
-    return value[e.member]
+    if (e.property.type === 'string') {
+      return value[e.property.value]
+    }
+    throw new Error('invalid member expression')
   }
 
-  throw new Error(`Cannot access member of non-object: ${e.member}`)
+  throw new Error(`Cannot access member of non-object: ${e.object}`)
 }
 
 async function evalBinaryExpression(
@@ -157,4 +165,22 @@ async function evalUnaryExpression(
   }
 
   throw new Error(`Unknown unary expression: ${e.operator}`)
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function evalIdentifier(page: Page, iden: Identifier): any {
+  if (iden.value === 'page') {
+    return new ExprPage(page)
+  }
+  throw new Error(`Unknown identifier: ${iden.value}`)
+}
+
+class ExprPage {
+  type: 'page'
+  page: Page
+
+  constructor(page: Page) {
+    this.type = 'page'
+    this.page = page
+  }
 }
