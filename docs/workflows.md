@@ -80,4 +80,4 @@ The if condition for the current step. If the condition is not satisfied, the jo
 
 ### `jobs.<job_id>.steps[*].run`
 
-The expressions to execute on the matched Notion page.
+The expressions to execute on the matched Notion page. For expressions syntax, refer to [here](./expressions.md)
