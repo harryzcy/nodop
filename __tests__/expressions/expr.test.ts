@@ -81,12 +81,8 @@ describe('evaluate', () => {
       },
     }
 
-    expect(await evaluate(page, 'is_empty(property("null_select"))')).toBe(true)
-    expect(
-      await evaluate(page, 'is_type(property("null_select"), "select")'),
-    ).toBe(true)
-    expect(await evaluate(page, 'is_type(property("title"), "select")')).toBe(
-      false,
-    )
+    expect(await evaluate(page, 'page.get_property("null_select").is_empty()')).toBe(true)
+    expect(await evaluate(page, 'page.get_property("null_select").is_type("select")')).toBe(true)
+    expect(await evaluate(page, 'page.get_property("title").is_type("select")')).toBe(false)
   })
 })

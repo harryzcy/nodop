@@ -52,14 +52,6 @@ async function evalExpression(page: Page, e: Expression): Promise<any> {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function evalCallExpression(page: Page, e: CallExpression): Promise<any> {
-  if (e.func === 'property') {
-    if (e.args.length !== 1) {
-      throw new Error('property takes exactly one argument')
-    }
-    const value = await evalExpression(page, e.args[0])
-    return page.properties[value]
-  }
-
   if (e.func === 'is_type') {
     if (e.args.length !== 2) {
       throw new Error('is_type takes exactly two arguments')
@@ -95,16 +87,6 @@ async function evalCallExpression(page: Page, e: CallExpression): Promise<any> {
     return value !== null && value !== ''
   }
 
-  if (e.func === 'set_property') {
-    if (e.args.length !== 2) {
-      throw new Error('set_property takes exactly two arguments')
-    }
-    const property = await evalExpression(page, e.args[0])
-    const value = await evalExpression(page, e.args[1])
-    await setPageProperty(page.id, property, value)
-    return null
-  }
-
   throw new Error(`Unknown call expression: ${e.func}`)
 }
 
@@ -113,11 +95,33 @@ async function evalMemberExpression(
   e: MemberExpression,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
-  const value = await evalExpression(page, e.object)
+  let value = await evalExpression(page, e.object)
   if (typeof value === 'object') {
     if (e.property.type === 'string') {
       return value[e.property.value]
     }
+
+    if (e.property.type === 'identifier') {
+      return value[e.property.value]
+    }
+
+    if (e.property.type === 'call_expression') {
+      const args = await Promise.all(e.property.args.map(async (arg) => {
+        return await evalExpression(page, arg)
+      }))
+
+      // default to ObjectValue type
+      if (typeof value === 'object' && !(value instanceof PageValue || value instanceof PropertyValue)) {
+        value = new ObjectValue(value)
+      }
+
+      if (value[e.property.func] instanceof AsyncFunction) {
+        return await value[e.property.func](...args)
+      }
+
+      return value[e.property.func](...args)
+    }
+
     throw new Error('invalid member expression')
   }
 
@@ -170,12 +174,12 @@ async function evalUnaryExpression(
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function evalIdentifier(page: Page, iden: Identifier): any {
   if (iden.value === 'page') {
-    return new ExprPage(page)
+    return new PageValue(page)
   }
   throw new Error(`Unknown identifier: ${iden.value}`)
 }
 
-class ExprPage {
+class PageValue {
   type: 'page'
   page: Page
 
@@ -183,4 +187,63 @@ class ExprPage {
     this.type = 'page'
     this.page = page
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  get_property(name: string): PropertyValue {
+    return new PropertyValue(this.page.properties[name])
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async set_property(name: string, value: any): Promise<void> {
+    await setPageProperty(this.page.id, name, value)
+    return null
+  }
 }
+
+class PropertyValue {
+  type: 'property'
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  property: any
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  constructor(property: any) {
+    this.type = 'property'
+    this.property = property
+  }
+
+  is_type(expectedType: string): boolean {
+    return this.property && 'type' in this.property && this.property.type === expectedType
+  }
+
+  is_empty(): boolean {
+    if (this.property && 'type' in this.property) {
+      return this.property[this.property.type] === null || this.property[this.property.type] === ''
+    }
+    return false
+  }
+}
+
+class ObjectValue {
+  type: 'object'
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  value: any
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  constructor(value: any) {
+    if (typeof value !== 'object') {
+      throw new Error('ObjectValue must be initialized with an object')
+    }
+
+    this.type = 'object'
+    this.value = value
+  }
+
+  is_empty(): boolean {
+    if (this.value === null) return true
+
+    return false
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const AsyncFunction = (async () => { }).constructor
