@@ -194,16 +194,12 @@ class CustomValue {
 
 class PageValue extends CustomValue {
   type: 'page'
-  declare page: Page
+  declare value: Page
 
   constructor(page: Page) {
     super()
     this.type = 'page'
     this.value = page
-  }
-
-  get_field(name: string) {
-    return this.value[name]
   }
 
   get_property(name: string): PropertyValue {
@@ -212,7 +208,7 @@ class PageValue extends CustomValue {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async set_property(name: string, value: any): Promise<void> {
-    await setPageProperty(this.page.id, name, value)
+    await setPageProperty(this.value.id, name, value)
     return null
   }
 }
