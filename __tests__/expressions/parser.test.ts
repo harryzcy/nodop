@@ -92,4 +92,66 @@ describe('parser', () => {
       },
     })
   })
+
+  it('chained member expressions', () => {
+    expect(new Parser('foo.bar.value').parse()).toStrictEqual({
+      type: 'member_expression',
+      object: {
+        type: 'member_expression',
+        object: {
+          type: 'identifier',
+          value: 'foo',
+        },
+        property: {
+          type: 'identifier',
+          value: 'bar',
+        },
+      },
+      property: {
+        type: 'identifier',
+        value: 'value',
+      },
+    })
+
+    expect(new Parser('foo.bar().value').parse()).toStrictEqual({
+      type: 'member_expression',
+      object: {
+        type: 'member_expression',
+        object: {
+          type: 'identifier',
+          value: 'foo',
+        },
+        property: {
+          type: 'call_expression',
+          func: 'bar',
+          args: [],
+        },
+      },
+      property: {
+        type: 'identifier',
+        value: 'value',
+      },
+    })
+
+    expect(new Parser('page.get_property("foo").is_empty()').parse()).toStrictEqual({
+      type: 'member_expression',
+      object: {
+        type: 'member_expression',
+        object: {
+          type: 'identifier',
+          value: 'page',
+        },
+        property: {
+          type: 'call_expression',
+          func: 'get_property',
+          args: [{ type: 'string', value: 'foo', }],
+        },
+      },
+      property: {
+        type: 'call_expression',
+        func: 'is_empty',
+        args: [],
+      },
+    })
+  })
 })

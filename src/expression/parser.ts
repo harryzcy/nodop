@@ -169,8 +169,22 @@ export class Parser {
         operator: op.type(),
       }
     } else {
-      return this.parseUnitExpression()
+      return this.parseMemberExpression()
     }
+  }
+
+  parseMemberExpression(): Expression {
+    let expr = this.parseUnitExpression()
+    while (this.currentToken.type() === TokenType.DOT) {
+      this.takeIt()
+      const property = this.parseUnitExpression()
+      expr = {
+        type: 'member_expression',
+        object: expr,
+        property,
+      }
+    }
+    return expr
   }
 
   parseUnitExpression(): Expression {
@@ -198,67 +212,35 @@ export class Parser {
       // identifier
       case TokenType.IDENTIFIER:
         iden = this.takeIt().value()
-        switch (this.currentToken.type()) {
-          // identifier
-          case TokenType.EOT:
-            return {
-              type: 'identifier',
-              value: iden,
-            }
-          // call expression
-          case TokenType.LEFT_PAREN:
-            this.takeIt()
-            args = this.parseArgumentList()
-            this.take(TokenType.RIGHT_PAREN)
-            expr = {
-              type: 'call_expression',
-              func: iden,
-              args,
-            }
-            break
-          // member expression
-          case TokenType.DOT:
-            this.takeIt()
-            expr = {
-              type: 'member_expression',
-              object: {
-                type: 'identifier',
-                value: iden,
-              },
-              property: this.parseExpression(),
-            }
-            break
-          // error
-          default:
-            throw new Error(
-              `Expected ${TokenType[TokenType.LEFT_PAREN]} or ${TokenType[TokenType.DOT]}, ` +
-              `but got ${TokenType[this.currentToken.type()]}`,
-            )
+
+        // call expression
+        if (this.currentToken.type() === TokenType.LEFT_PAREN) {
+          this.takeIt()
+          args = this.parseArgumentList()
+          this.take(TokenType.RIGHT_PAREN)
+          return {
+            type: 'call_expression',
+            func: iden,
+            args,
+          }
+        } else {
+          return {
+            type: 'identifier',
+            value: iden,
+          }
         }
-        break
       // group expression
       case TokenType.LEFT_PAREN:
         this.takeIt()
         expr = this.parseExpression()
         this.take(TokenType.RIGHT_PAREN)
-        expr = {
+        return {
           type: 'group_expression',
           expr: expr,
         }
-        break
       default:
         throw new Error("Unknown token type")
     }
-
-    if (this.currentToken.type() === TokenType.DOT) {
-      this.takeIt()
-      expr = {
-        type: 'member_expression',
-        object: expr,
-        property: this.parseExpression(),
-      }
-    }
-    return expr
   }
 
   parseArgumentList(): Expression[] {
