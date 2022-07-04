@@ -199,6 +199,12 @@ export class Parser {
       case TokenType.IDENTIFIER:
         iden = this.takeIt().value()
         switch (this.currentToken.type()) {
+          // identifier
+          case TokenType.EOT:
+            return {
+              type: 'identifier',
+              value: iden,
+            }
           // call expression
           case TokenType.LEFT_PAREN:
             this.takeIt()
