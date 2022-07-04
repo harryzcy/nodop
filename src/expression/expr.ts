@@ -102,7 +102,7 @@ async function evalMemberExpression(
     }
 
     if (e.property.type === 'identifier') {
-      if (value instanceof PageValue || value instanceof PropertyValue) {
+      if (value instanceof CustomValue) {
         return value.get_field(e.property.value)
       }
 
@@ -115,7 +115,7 @@ async function evalMemberExpression(
       }))
 
       // default to ObjectValue type
-      if (typeof value === 'object' && !(value instanceof PageValue || value instanceof PropertyValue)) {
+      if (typeof value === 'object' && !(value instanceof CustomValue)) {
         value = new ObjectValue(value)
       }
 
@@ -183,21 +183,31 @@ function evalIdentifier(page: Page, iden: Identifier): any {
   throw new Error(`Unknown identifier: ${iden.value}`)
 }
 
-class PageValue {
+class CustomValue {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  value: any
+
+  get_field(name: string) {
+    return this.value[name]
+  }
+}
+
+class PageValue extends CustomValue {
   type: 'page'
-  page: Page
+  declare page: Page
 
   constructor(page: Page) {
+    super()
     this.type = 'page'
-    this.page = page
+    this.value = page
   }
 
   get_field(name: string) {
-    return this.page[name]
+    return this.value[name]
   }
 
   get_property(name: string): PropertyValue {
-    return new PropertyValue(this.page.properties[name])
+    return new PropertyValue(this.value.properties[name])
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -207,28 +217,23 @@ class PageValue {
   }
 }
 
-class PropertyValue {
+class PropertyValue extends CustomValue {
   type: 'property'
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  property: any
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor(property: any) {
+    super()
     this.type = 'property'
-    this.property = property
-  }
-
-  get_field(name: string) {
-    return this.property[name]
+    this.value = property
   }
 
   is_type(expectedType: string): boolean {
-    return this.property && 'type' in this.property && this.property.type === expectedType
+    return this.value && 'type' in this.value && this.value.type === expectedType
   }
 
   is_empty(): boolean {
-    if (this.property && 'type' in this.property) {
-      return this.property[this.property.type] === null || this.property[this.property.type] === ''
+    if (this.value && 'type' in this.value) {
+      return this.value[this.value.type] === null || this.value[this.value.type] === ''
     }
     return false
   }
