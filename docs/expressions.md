@@ -12,7 +12,7 @@ page.set_property('Status', 'TODO') // to set Status to 'TODO'
 
 - `page`: Page object
 
-## Builtin Types
+## Built-in Types
 
 ### Page
 
