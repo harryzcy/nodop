@@ -202,10 +202,6 @@ class PageValue extends CustomValue {
     this.value = page
   }
 
-  get_field(name: string) {
-    return this.value[name]
-  }
-
   get_property(name: string): PropertyValue {
     return new PropertyValue(this.value.properties[name])
   }
