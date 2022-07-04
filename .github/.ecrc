@@ -9,11 +9,10 @@
   ],
   "AllowedContentTypes": [],
   "PassedFiles": [],
-  "InsertFinalNewline": true,
   "Disable": {
     "EndOfLine": false,
     "Indentation": false,
-    "InsertFinalNewline": false,
+    "InsertFinalNewline": true,
     "TrimTrailingWhitespace": false,
     "IndentSize": false,
     "MaxLineLength": false
