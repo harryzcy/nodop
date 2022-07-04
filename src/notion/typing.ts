@@ -3,6 +3,15 @@ import type { Client } from '@notionhq/client'
 type ArrayElement<ArrayType extends readonly unknown[]> =
   ArrayType extends readonly (infer ElementType)[] ? ElementType : never
 
+export type PartialDatabase = Awaited<
+  ReturnType<InstanceType<typeof Client>['databases']['retrieve']>
+>
+
+export type Database = Extract<
+  Awaited<ReturnType<InstanceType<typeof Client>['databases']['retrieve']>>,
+  { url: string }
+>
+
 export type PartialPage = Awaited<
   ReturnType<InstanceType<typeof Client>['pages']['retrieve']>
 >
