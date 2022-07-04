@@ -102,6 +102,10 @@ async function evalMemberExpression(
     }
 
     if (e.property.type === 'identifier') {
+      if (value instanceof PageValue || value instanceof PropertyValue) {
+        return value.get_field(e.property.value)
+      }
+
       return value[e.property.value]
     }
 
@@ -188,7 +192,10 @@ class PageValue {
     this.page = page
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  get_field(name: string) {
+    return this.page[name]
+  }
+
   get_property(name: string): PropertyValue {
     return new PropertyValue(this.page.properties[name])
   }
@@ -209,6 +216,10 @@ class PropertyValue {
   constructor(property: any) {
     this.type = 'property'
     this.property = property
+  }
+
+  get_field(name: string) {
+    return this.property[name]
   }
 
   is_type(expectedType: string): boolean {
