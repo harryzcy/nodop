@@ -6,6 +6,8 @@
 
 A workflow runner system for Notion databases.
 
+WARNING: There maybe breaking changes before 1.0 release.
+
 ## Usage
 
 Use Docker:
@@ -27,7 +29,7 @@ npm run daemon
 
 ## Workflow Syntax
 
-Please refer to [workflows doc](docs/workflows.md)
+Please refer to [workflows doc](docs/workflows.md) or [examples](./examples/)
 
 ## Additional Configurations
 
