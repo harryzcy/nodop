@@ -10,7 +10,6 @@ jobs:
   release:
     name: Release on GitHub
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'
     permissions:
       contents: write
     steps:
@@ -23,13 +22,14 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
+            const draft = context.eventName == 'push'
             github.rest.repos.updateRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
               release_id: ${{ steps.release_drafter.outputs.id }},
               tag_name: ${{ github.ref_name }},
-              name: 'Release v${{ github.ref_name }}',
-              draft: false
+              name: 'Release ${{ github.ref_name }}',
+              draft: draft
             });
 
   docker:
