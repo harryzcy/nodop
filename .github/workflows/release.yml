@@ -26,7 +26,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               release_id: ${{ steps.release_drafter.outputs.id }},
-              tag_name: ${{ github.ref_name }},
+              tag_name: '${{ github.ref_name }}',
               name: 'Release ${{ github.ref_name }}',
               draft: context.eventName != 'push'
             });
