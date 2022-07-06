@@ -15,10 +15,22 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v3
-      - uses: ncipollo/release-action@v1
+      - uses: release-drafter/release-drafter@v5
+        id: release_drafter
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish Release
+        uses: actions/github-script@v6
         with:
-          name: Release ${{ github.ref_name }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.repos.updateRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: ${{ steps.release_drafter.outputs.id }},
+              tag_name: ${{ github.ref_name }},
+              name: 'Release v${{ github.ref_name }}',
+              draft: false
+            });
 
   docker:
     name: Build Docker Image
