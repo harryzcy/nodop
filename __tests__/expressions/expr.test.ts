@@ -1,5 +1,9 @@
 import { evaluate } from '../../src/expression/expr.js'
 import { Page } from '../../src/notion/typing.js'
+import * as notion from '../../src/notion/notion.js'
+
+jest.mock('../../src/notion/notion.js')
+const mockedNotion = notion as jest.Mocked<typeof notion>
 
 describe('evaluate', () => {
   it('literal', async () => {
@@ -28,31 +32,44 @@ describe('evaluate', () => {
   })
 
   it('actual page', async () => {
+    mockedNotion.getPageProperty.mockImplementation(async (_, propertyID) => {
+      console.log(36, propertyID)
+      if (propertyID == '1-title') {
+        return {
+          object: "property_item",
+          id: propertyID,
+          type: "title",
+          title: {
+            type: 'text',
+            plain_text: 'example_title',
+            annotations: null,
+            text: null,
+            href: null,
+          },
+        }
+      }
+      if (propertyID == '2-select' || propertyID == '3-select') {
+        return {
+          object: "property_item",
+          id: propertyID,
+          type: "select",
+          select: null,
+        }
+      }
+      throw new Error("property not found")
+    })
+
     const page: Page = {
       parent: { type: 'database_id', database_id: '123' },
       properties: {
         title: {
-          id: '123',
-          type: 'title',
-          title: [
-            {
-              type: 'text',
-              plain_text: 'example_title',
-              annotations: null,
-              text: null,
-              href: null,
-            },
-          ],
+          id: '1-title',
         },
         null_select: {
-          id: '123',
-          type: 'select',
-          select: null,
+          id: '2-select',
         },
         Status: {
-          id: '123',
-          type: 'select',
-          select: null,
+          id: '3-select',
         },
       },
       created_by: {
@@ -82,7 +99,7 @@ describe('evaluate', () => {
     }
 
     expect(await evaluate(page, 'page.get_property("null_select").is_empty()')).toBe(true)
-    expect(await evaluate(page, 'page.get_property("null_select").is_type("select")')).toBe(true)
+    expect(await evaluate(page, 'page.get_property("Status").is_type("select")')).toBe(true)
     expect(await evaluate(page, 'page.get_property("title").is_type("select")')).toBe(false)
   })
 })

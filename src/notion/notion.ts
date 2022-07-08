@@ -89,6 +89,13 @@ export async function getNewPagesFromDatabase(
   })
 }
 
+export async function getPageProperty(pageId: string, propertyID: string) {
+  return await notion.pages.properties.retrieve({
+    page_id: pageId,
+    property_id: propertyID,
+  })
+}
+
 export async function setPageProperty(
   pageId: string,
   propertyName: string,
