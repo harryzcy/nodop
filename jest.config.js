@@ -17,4 +17,7 @@ export default {
     '!src/**/*.d.ts',
     '!src/**/*.d.mts',
   ],
+  transform: {
+    '^.+\\.(ts|tsx)?$': 'ts-jest',
+  }
 }

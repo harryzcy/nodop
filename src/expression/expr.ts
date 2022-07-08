@@ -9,7 +9,7 @@ import {
   Identifier,
 } from './parser.js'
 import { TokenType } from './scanner.js'
-import { setPageProperty } from '../notion/notion.js'
+import { getPageProperty, setPageProperty } from '../notion/notion.js'
 
 export async function evaluate(page: Page, s: string): Promise<boolean | null> {
   const parser = new Parser(s)
@@ -202,8 +202,10 @@ class PageValue extends CustomValue {
     this.value = page
   }
 
-  get_property(name: string): PropertyValue {
-    return new PropertyValue(this.value.properties[name])
+  async get_property(name: string): Promise<PropertyValue> {
+    const propertyObject = this.value.properties[name]
+    const value = await getPageProperty(this.value.id, propertyObject.id)
+    return new PropertyValue(value)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
