@@ -53,6 +53,31 @@ export class PropertyValue extends CustomValue {
     }
     return false
   }
+
+  get_value(): string {
+    if (this.is_empty()) return ''
+    if (!this.value || !('type' in this.value)) return ''
+
+    return this.value[this.value.type]
+  }
+
+  contains(value: string): boolean {
+    if (this.is_empty()) return false
+    if (!this.value || !('type' in this.value)) return false
+
+    switch (this.value.type) {
+      case 'multi_select':
+        return this.value.multi_select.some((select: { id: string, name: string, color: string }) => {
+          return select.name === value
+        })
+      default:
+        throw new Error(`contains is not implemented for property type ${this.value.type}`)
+    }
+  }
+
+  not_contains(value: string): boolean {
+    return !this.contains(value)
+  }
 }
 
 export class ObjectValue {
