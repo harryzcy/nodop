@@ -13,12 +13,15 @@ WARNING: There maybe breaking changes before 1.0 release.
 Use Docker:
 
 ```shell
-docker run -v PATH/TO/CONFIG/:app/conf --env NOTION_KEY=<notion_key> harryzcy/nodop
+docker run -v PATH/TO/CONFIG/:app/conf/ -v PATH/TO/CACHE/:app/cache/ --env NOTION_KEY=<notion_key> harryzcy/nodop
 ```
 
-`PATH/TO/CONFIG/` should point to a directory holding workflow files according to [this syntax](#workflow-syntax).
+- `PATH/TO/CONFIG/` should point to a directory holding workflow files according to [this syntax](#workflow-syntax).
+- `PATH/TO/CONFIG/` (optional) should point to a directory for cache
 
-`NOTION_KEY` should be obtained by creating your own [Notion integration](https://www.notion.so/my-integrations).
+  If enabled, timestamp of the last runtime will be stored, so when Docker is restarted, it can catch up from last timestamp.
+
+- `NOTION_KEY` should be obtained by creating your own [Notion integration](https://www.notion.so/my-integrations).
 
 ## Build
 
