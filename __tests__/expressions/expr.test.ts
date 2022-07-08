@@ -33,7 +33,6 @@ describe('evaluate', () => {
 
   it('actual page', async () => {
     mockedNotion.getPageProperty.mockImplementation(async (_, propertyID) => {
-      console.log(36, propertyID)
       if (propertyID == '1-title') {
         return {
           object: "property_item",
