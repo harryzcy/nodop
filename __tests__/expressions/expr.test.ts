@@ -146,5 +146,7 @@ describe('evaluate', () => {
     expect(await evaluate(page, 'page.get_property("multi_select").contains("A")')).toBe(true)
     expect(await evaluate(page, 'page.get_property("multi_select").contains("B")')).toBe(true)
     expect(await evaluate(page, 'page.get_property("multi_select").contains("C")')).toBe(false)
+    // not_contains
+    expect(await evaluate(page, 'page.get_property("multi_select").not_contains("A")')).toBe(false)
   })
 })
