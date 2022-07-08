@@ -90,6 +90,7 @@ export async function getNewPagesFromDatabase(
 }
 
 export async function getPageProperty(pageId: string, propertyID: string) {
+  // TODO: support getting paginated results
   return await notion.pages.properties.retrieve({
     page_id: pageId,
     property_id: propertyID,
