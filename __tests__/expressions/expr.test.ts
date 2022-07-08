@@ -35,16 +35,26 @@ describe('evaluate', () => {
     mockedNotion.getPageProperty.mockImplementation(async (_, propertyID) => {
       if (propertyID == '1-title') {
         return {
-          object: "property_item",
+          object: "list",
           id: propertyID,
-          type: "title",
-          title: {
-            type: 'text',
-            plain_text: 'example_title',
-            annotations: null,
-            text: null,
-            href: null,
-          },
+          results: [
+            {
+              object: "property_item",
+              type: "title",
+              id: 'title',
+              title: {
+                type: 'text',
+                plain_text: 'example_title',
+                annotations: null,
+                text: null,
+                href: null,
+              }
+            }
+          ],
+          next_cursor: null,
+          has_more: false,
+          type: "property_item",
+          property_item: { id: 'title', next_url: null, type: 'title', title: {} },
         }
       }
       if (propertyID == '2-select') {
@@ -143,6 +153,7 @@ describe('evaluate', () => {
     expect(await evaluate(page, 'page.get_property("Status").get_value().name == "Option 1"')).toBe(true)
 
     // contains
+    expect(await evaluate(page, 'page.get_property("title").contains("example")')).toBe(true)
     expect(await evaluate(page, 'page.get_property("multi_select").contains("A")')).toBe(true)
     expect(await evaluate(page, 'page.get_property("multi_select").contains("B")')).toBe(true)
     expect(await evaluate(page, 'page.get_property("multi_select").contains("C")')).toBe(false)
