@@ -1,6 +1,6 @@
 import { Client, APIErrorCode } from '@notionhq/client'
 import { Page, PartialPage } from './typing.js'
-import cache from '../cache.js'
+import cache from '../utils/cache.js'
 
 export const notion = new Client({ auth: process.env.NOTION_KEY })
 
