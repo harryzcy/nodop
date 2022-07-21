@@ -110,9 +110,11 @@ async function evalMemberExpression(
     }
 
     if (e.property.type === 'call_expression') {
-      const args = await Promise.all(e.property.args.map(async (arg) => {
-        return await evalExpression(page, arg)
-      }))
+      const args = await Promise.all(
+        e.property.args.map(async (arg) => {
+          return await evalExpression(page, arg)
+        }),
+      )
 
       // default to ObjectValue type
       if (typeof value === 'object' && !(value instanceof CustomValue)) {
@@ -184,4 +186,4 @@ function evalIdentifier(page: Page, iden: Identifier): any {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
-const AsyncFunction = (async () => { }).constructor
+const AsyncFunction = (async () => {}).constructor

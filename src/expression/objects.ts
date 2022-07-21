@@ -1,5 +1,5 @@
-import { getPageProperty, setPageProperty } from "../notion/notion.js"
-import { Page } from "../notion/typing.js"
+import { getPageProperty, setPageProperty } from '../notion/notion.js'
+import { Page } from '../notion/typing.js'
 
 export class CustomValue {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -44,12 +44,17 @@ export class PropertyValue extends CustomValue {
   }
 
   is_type(expectedType: string): boolean {
-    return this.value && 'type' in this.value && this.value.type === expectedType
+    return (
+      this.value && 'type' in this.value && this.value.type === expectedType
+    )
   }
 
   is_empty(): boolean {
     if (this.value && 'type' in this.value) {
-      return this.value[this.value.type] === null || this.value[this.value.type] === ''
+      return (
+        this.value[this.value.type] === null ||
+        this.value[this.value.type] === ''
+      )
     }
     return false
   }
@@ -66,19 +71,25 @@ export class PropertyValue extends CustomValue {
     if (!this.value || !('type' in this.value)) return false
 
     if (this.value.type === 'multi_select') {
-      return this.value.multi_select.some((select: { id: string, name: string, color: string }) => {
-        return select.name === value
-      })
+      return this.value.multi_select.some(
+        (select: { id: string; name: string; color: string }) => {
+          return select.name === value
+        },
+      )
     }
     if (this.value.type === 'property_item') {
-     if (this.value.property_item.type === 'title') {
-      const fullTitle = this.value.results.map((result: { title: { plain_text: string } }) => {
-        return result.title.plain_text
-      }).join('')
-      return fullTitle.includes(value)
-     }
+      if (this.value.property_item.type === 'title') {
+        const fullTitle = this.value.results
+          .map((result: { title: { plain_text: string } }) => {
+            return result.title.plain_text
+          })
+          .join('')
+        return fullTitle.includes(value)
+      }
     }
-    throw new Error(`contains is not implemented for property type ${this.value.type}`)
+    throw new Error(
+      `contains is not implemented for property type ${this.value.type}`,
+    )
   }
 
   not_contains(value: string): boolean {

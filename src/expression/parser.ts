@@ -57,17 +57,17 @@ export type UnaryExpression = {
 
 export type Literal =
   | {
-    type: 'string'
-    value: string
-  }
+      type: 'string'
+      value: string
+    }
   | {
-    type: 'boolean'
-    value: boolean
-  }
+      type: 'boolean'
+      value: boolean
+    }
   | {
-    type: 'number'
-    value: number
-  }
+      type: 'number'
+      value: number
+    }
 
 export type Identifier = {
   type: 'identifier'
@@ -239,7 +239,7 @@ export class Parser {
           expr: expr,
         }
       default:
-        throw new Error("Unknown token type")
+        throw new Error('Unknown token type')
     }
   }
 
@@ -264,7 +264,9 @@ export class Parser {
   take(expected: TokenType): Token {
     if (this.currentToken.type() !== expected) {
       throw new Error(
-        `Expected ${TokenType[expected]}, but got ${TokenType[this.currentToken.type()]}`,
+        `Expected ${TokenType[expected]}, but got ${
+          TokenType[this.currentToken.type()]
+        }`,
       )
     }
     return this.takeIt()
