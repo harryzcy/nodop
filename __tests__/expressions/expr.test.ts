@@ -1,5 +1,5 @@
+import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints.js'
 import { evaluate } from '../../src/expression/expr.js'
-import { Page } from '../../src/notion/typing.js'
 import * as notion from '../../src/notion/notion.js'
 
 jest.mock('../../src/notion/notion.js')
@@ -105,7 +105,7 @@ describe('evaluate', () => {
       throw new Error('property not found')
     })
 
-    const page: Page = {
+    const page: PageObjectResponse = {
       parent: { type: 'database_id', database_id: '123' },
       properties: {
         title: {

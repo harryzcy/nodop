@@ -1,8 +1,8 @@
 import util from 'util'
 import child_process from 'child_process'
+import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints.js'
 import { getNewPagesFromDatabase, RateLimitedError } from '../notion/notion.js'
 import { Configuration, ConfigurationIndex, Job } from '../utils/config.js'
-import { Page } from '../notion/typing.js'
 import { evaluate } from '../expression/expr.js'
 import { getIntFromEnv } from '../utils/env_setting.js'
 
@@ -97,7 +97,7 @@ async function runWorkflowForDB(
   return 0
 }
 
-async function runJobOnPage(page: Page, job: Job) {
+async function runJobOnPage(page: PageObjectResponse, job: Job) {
   const condition = job.if ? await evaluate(page, job.if) : true
   if (!condition) return
 

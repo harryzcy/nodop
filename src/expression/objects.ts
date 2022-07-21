@@ -1,5 +1,5 @@
+import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints.js'
 import { getPageProperty, setPageProperty } from '../notion/notion.js'
-import { Page } from '../notion/typing.js'
 
 export class CustomValue {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -12,9 +12,9 @@ export class CustomValue {
 
 export class PageValue extends CustomValue {
   type: 'page'
-  declare value: Page
+  declare value: PageObjectResponse
 
-  constructor(page: Page) {
+  constructor(page: PageObjectResponse) {
     super()
     this.type = 'page'
     this.value = page
