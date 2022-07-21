@@ -1,5 +1,5 @@
-import { Parser } from "../../src/expression/parser"
-import { TokenType } from "../../src/expression/scanner"
+import { Parser } from '../../src/expression/parser'
+import { TokenType } from '../../src/expression/scanner'
 
 describe('parser', () => {
   it('literal', () => {
@@ -86,8 +86,8 @@ describe('parser', () => {
         type: 'call_expression',
         func: 'bar',
         args: [
-          { type: 'string', value: 'arg1', },
-          { type: 'string', value: 'arg2', },
+          { type: 'string', value: 'arg1' },
+          { type: 'string', value: 'arg2' },
         ],
       },
     })
@@ -133,7 +133,9 @@ describe('parser', () => {
       },
     })
 
-    expect(new Parser('page.get_property("foo").is_empty()').parse()).toStrictEqual({
+    expect(
+      new Parser('page.get_property("foo").is_empty()').parse(),
+    ).toStrictEqual({
       type: 'member_expression',
       object: {
         type: 'member_expression',
@@ -144,7 +146,7 @@ describe('parser', () => {
         property: {
           type: 'call_expression',
           func: 'get_property',
-          args: [{ type: 'string', value: 'foo', }],
+          args: [{ type: 'string', value: 'foo' }],
         },
       },
       property: {

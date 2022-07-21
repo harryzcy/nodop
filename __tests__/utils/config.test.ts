@@ -8,7 +8,7 @@ import {
   getAllConfigs,
   getConfigIndex,
   Configuration,
-} from '../src/config.js'
+} from '../../src/utils/config.js'
 
 describe('validateConfig', () => {
   it('valid config, one db', () => {
