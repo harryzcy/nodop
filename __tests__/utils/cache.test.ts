@@ -1,4 +1,4 @@
-import { isDirectory } from '../src/cache'
+import { isDirectory } from '../../src/utils/cache'
 
 describe('isDirectory', () => {
   it('should return true if path is directory', async () => {

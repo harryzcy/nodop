@@ -1,10 +1,10 @@
 import util from 'util'
 import child_process from 'child_process'
-import { getNewPagesFromDatabase, RateLimitedError } from './notion/notion.js'
-import { Configuration, ConfigurationIndex, Job } from './config.js'
-import { Page } from './notion/typing.js'
-import { evaluate } from './expression/expr.js'
-import { getIntFromEnv } from './env_setting.js'
+import { getNewPagesFromDatabase, RateLimitedError } from '../notion/notion.js'
+import { Configuration, ConfigurationIndex, Job } from '../utils/config.js'
+import { Page } from '../notion/typing.js'
+import { evaluate } from '../expression/expr.js'
+import { getIntFromEnv } from '../utils/env_setting.js'
 
 // exec is a function that executes a bash command
 const exec = util.promisify(child_process.exec)
@@ -29,7 +29,8 @@ export async function runNonStop(index: ConfigurationIndex) {
       const wait = await runOnce(index)
       counter == 0
 
-      if (wait > 0) { // rate limited, wait for Retry-After seconds
+      if (wait > 0) {
+        // rate limited, wait for Retry-After seconds
         await sleep((wait - 1) * 1000)
       }
     }

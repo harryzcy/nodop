@@ -1,4 +1,4 @@
-import { getIntFromEnv } from '../src/env_setting.js'
+import { getIntFromEnv } from '../../src/utils/env_setting.js'
 
 describe('getIntFromEnv', () => {
   it('should return the default value if the env variable is not set', () => {

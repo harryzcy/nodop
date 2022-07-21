@@ -1,4 +1,4 @@
-import { notion, eventsContainsOnly } from '../src/notion/notion.js'
+import { notion, eventsContainsOnly } from '../../src/notion/notion.js'
 
 describe('notion client', () => {
   it('notion client is valid', () => {
