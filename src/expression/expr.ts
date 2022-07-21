@@ -1,4 +1,4 @@
-import { Page } from '../notion/typing.js'
+import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints.js'
 import {
   CallExpression,
   MemberExpression,
@@ -11,14 +11,20 @@ import {
 import { TokenType } from './scanner.js'
 import { CustomValue, ObjectValue, PageValue } from './objects.js'
 
-export async function evaluate(page: Page, s: string): Promise<boolean | null> {
+export async function evaluate(
+  page: PageObjectResponse,
+  s: string,
+): Promise<boolean | null> {
   const parser = new Parser(s)
   const expr = parser.parse()
   return await evalExpression(page, expr)
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function evalExpression(page: Page, e: Expression): Promise<any> {
+async function evalExpression(
+  page: PageObjectResponse,
+  e: Expression,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): Promise<any> {
   if (e.type === 'call_expression') {
     return await evalCallExpression(page, e)
   }
@@ -50,8 +56,11 @@ async function evalExpression(page: Page, e: Expression): Promise<any> {
   return null
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function evalCallExpression(page: Page, e: CallExpression): Promise<any> {
+async function evalCallExpression(
+  page: PageObjectResponse,
+  e: CallExpression,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): Promise<any> {
   if (e.func === 'is_type') {
     if (e.args.length !== 2) {
       throw new Error('is_type takes exactly two arguments')
@@ -91,7 +100,7 @@ async function evalCallExpression(page: Page, e: CallExpression): Promise<any> {
 }
 
 async function evalMemberExpression(
-  page: Page,
+  page: PageObjectResponse,
   e: MemberExpression,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
@@ -135,7 +144,7 @@ async function evalMemberExpression(
 }
 
 async function evalBinaryExpression(
-  page: Page,
+  page: PageObjectResponse,
   e: BinaryExpression,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
@@ -165,7 +174,7 @@ async function evalBinaryExpression(
 }
 
 async function evalUnaryExpression(
-  page: Page,
+  page: PageObjectResponse,
   e: UnaryExpression,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
@@ -178,7 +187,7 @@ async function evalUnaryExpression(
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function evalIdentifier(page: Page, iden: Identifier): any {
+function evalIdentifier(page: PageObjectResponse, iden: Identifier): any {
   if (iden.value === 'page') {
     return new PageValue(page)
   }

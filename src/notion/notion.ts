@@ -1,5 +1,13 @@
-import { Client, APIErrorCode } from '@notionhq/client'
-import { Page, PartialPage } from './typing.js'
+import {
+  Client,
+  APIErrorCode,
+  isFullPage,
+  collectPaginatedAPI,
+} from '@notionhq/client'
+import {
+  PageObjectResponse,
+  PartialPageObjectResponse,
+} from '@notionhq/client/build/src/api-endpoints.js'
 import cache from '../utils/cache.js'
 
 export const notion = new Client({ auth: process.env.NOTION_KEY })
@@ -48,10 +56,9 @@ export class RateLimitedError extends Error {
 export async function getNewPagesFromDatabase(
   databaseId: string,
   events: Set<string> = null,
-): Promise<Array<Page>> {
+): Promise<Array<PageObjectResponse>> {
   // TODO: use an in-memory store to avoid duplicates
 
-  let nextCursor: string | null | undefined = undefined
   let filter = null
   if (eventsContainsOnly(events, 'create', 'update')) {
     filter = {
@@ -62,30 +69,24 @@ export async function getNewPagesFromDatabase(
     }
   }
 
-  const pages: Array<PartialPage> = []
-  while (nextCursor !== null) {
-    try {
-      const response = await notion.databases.query({
-        database_id: databaseId,
-        filter,
-        start_cursor: nextCursor,
-      })
-
-      nextCursor = response.next_cursor
-      pages.push(...response.results)
-    } catch (error) {
-      if (error.code === APIErrorCode.RateLimited) {
-        // rate limited, raise error
-        // returning pages so far doesn't make sense because any subsequent API calls will fail
-        const retryAfter = Number(error.headers['Retry-After'])
-        throw new RateLimitedError(retryAfter)
-      }
-      throw error
+  let pages: Array<PartialPageObjectResponse>
+  try {
+    pages = await collectPaginatedAPI(notion.databases.query, {
+      database_id: databaseId,
+      filter,
+    })
+  } catch (error) {
+    if (error.code === APIErrorCode.RateLimited) {
+      // rate limited, raise error
+      // returning pages so far doesn't make sense because any subsequent API calls will fail
+      const retryAfter = Number(error.headers['Retry-After'])
+      throw new RateLimitedError(retryAfter)
     }
+    throw error
   }
 
-  return pages.filter((page: PartialPage): page is Page => {
-    return 'url' in page
+  return pages.filter((page): page is PageObjectResponse => {
+    return isFullPage(page)
   })
 }
 
