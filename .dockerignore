@@ -15,6 +15,3 @@ node_modules
 .gitignore
 .prettierrc
 jest.conf.json
-README.md
-tscofig.json
-tsconfig.release.json
