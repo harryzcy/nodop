@@ -29,7 +29,8 @@ export async function runNonStop(index: ConfigurationIndex) {
       const wait = await runOnce(index)
       counter == 0
 
-      if (wait > 0) { // rate limited, wait for Retry-After seconds
+      if (wait > 0) {
+        // rate limited, wait for Retry-After seconds
         await sleep((wait - 1) * 1000)
       }
     }
