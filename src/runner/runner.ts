@@ -5,6 +5,7 @@ import { getNewPagesFromDatabase, RateLimitedError } from '../notion/notion.js'
 import { Configuration, ConfigurationIndex, Job } from '../utils/config.js'
 import { evaluate } from '../expression/expr.js'
 import { getIntFromEnv } from '../utils/env_setting.js'
+import { getLogger } from '../utils/logger.js'
 
 // exec is a function that executes a bash command
 const exec = util.promisify(child_process.exec)
@@ -49,7 +50,7 @@ function sleep(ms: number) {
  * @returns The number of seconds to wait before running the next time
  */
 export async function runOnce(index: ConfigurationIndex): Promise<number> {
-  console.log(`[${new Date().toISOString()}] Running once...`)
+  getLogger().info('Running workflow')
   return await runWorkflow(index)
 }
 
@@ -108,13 +109,25 @@ async function runJobOnPage(page: PageObjectResponse, job: Job) {
     if (step.lang === 'bash') {
       const commands = step.run.join('\\\n')
       const { stdout, stderr } = await exec(commands)
-      if (stdout) console.log('stdout:', stdout)
-      if (stderr) console.error('stderr:', stderr)
+      getLogger().info('run-step', {
+        pageId: page.id,
+        jobId: job.name,
+        step: step.name,
+        lang: 'bash',
+        stdout,
+        stderr,
+      })
     } else {
       // 'builtin'
       for (const line of step.run) {
         await evaluate(page, line)
       }
+      getLogger().info('run-step', {
+        pageId: page.id,
+        jobId: job.name,
+        step: step.name,
+        lang: 'builtin',
+      })
     }
   }
 }

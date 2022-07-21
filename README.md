@@ -47,3 +47,7 @@ The path to configuration directory or file.
 The interval in seconds that Notion database changes will be checked.
 
 Default: 30
+
+### `LOG_FILE`
+
+The path of the log file. If left empty, the log will be outputted to console.
