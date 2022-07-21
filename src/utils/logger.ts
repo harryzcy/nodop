@@ -6,7 +6,7 @@ const logger = createLogger({
   level: 'info',
   format: format.combine(format.timestamp(), format.json()),
   defaultMeta: { service: 'nodop' },
-  transports: [new transports.File({ filename: LOG_FILE })],
+  transports: [],
 })
 
 if (LOG_FILE === undefined) {
