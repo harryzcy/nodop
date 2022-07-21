@@ -1,6 +1,6 @@
 import { Parser } from './parser.js'
 
-export function evaluate(s: string): boolean {
+export function validate(s: string): boolean {
   const parser = new Parser(s)
 
   let hasError = false
