@@ -9,6 +9,7 @@ import {
   PartialPageObjectResponse,
 } from '@notionhq/client/build/src/api-endpoints.js'
 import cache from '../utils/cache.js'
+import * as notionCache from './cache.js'
 
 export const notion = new Client({ auth: process.env.NOTION_KEY })
 
@@ -86,7 +87,15 @@ export async function getNewPagesFromDatabase(
   }
 
   return pages.filter((page): page is PageObjectResponse => {
-    return isFullPage(page)
+    if (!isFullPage(page)) return false
+
+    const cachedPage = notionCache.getPage(page.id)
+    if (cachedPage !== null && cachedPage.last_edited_time === page.last_edited_time) {
+      return false
+    }
+
+    notionCache.putPage(page)
+    return true
   })
 }
 
