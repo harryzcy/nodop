@@ -109,15 +109,23 @@ describe('evaluate', () => {
       parent: { type: 'database_id', database_id: '123' },
       properties: {
         title: {
+          type: 'title',
+          title: [],
           id: '1-title',
         },
         null_select: {
+          type: 'select',
+          select: null,
           id: '2-select',
         },
         Status: {
+          type: 'select',
+          select: null,
           id: '3-select',
         },
         multi_select: {
+          type: 'multi_select',
+          multi_select: [],
           id: '4-multi_select',
         },
       },
