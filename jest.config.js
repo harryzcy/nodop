@@ -12,6 +12,7 @@ export default {
     '!src/**/*.d.ts',
     '!src/**/*.d.mts',
   ],
+  coverageProvider: 'v8',
   transform: {
     '^.+\\.(ts|tsx)?$': ['ts-jest', {
       useESM: true,
