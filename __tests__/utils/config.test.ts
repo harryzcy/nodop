@@ -273,7 +273,7 @@ describe('parseConfig', () => {
       on: create`
 
     const t = () => parseConfig('filename', content)
-    expect(t).toThrowError('Invalid config: jobs must be a key-value object')
+    expect(t).toThrow('Invalid config: jobs must be a key-value object')
   })
 })
 
@@ -357,7 +357,7 @@ describe('loadConfig', () => {
 
   it('error, no file', async () => {
     const t = async () => await loadConfig('__tests__/testdata/not-exist')
-    await expect(t).rejects.toThrowError('Invalid configuration')
+    await expect(t).rejects.toThrow('Invalid configuration')
   })
 
   it('error, not file or directory', async () => {
@@ -365,7 +365,7 @@ describe('loadConfig', () => {
     await fs.promises.symlink('conf.yaml', filename)
 
     const t = async () => await loadConfig(filename)
-    await expect(t).rejects.toThrowError('Invalid configuration')
+    await expect(t).rejects.toThrow('Invalid configuration')
     await fs.promises.rm(filename)
   })
 })
