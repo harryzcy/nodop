@@ -1,6 +1,6 @@
 import { PageObjectResponse } from "@notionhq/client/build/src/api-endpoints"
 
-const cachedPages: Record<string, PageObjectResponse> = {}
+let cachedPages: Record<string, PageObjectResponse> = {}
 
 export function getPage(pageId: string) {
   if (pageId in cachedPages) {
@@ -11,4 +11,8 @@ export function getPage(pageId: string) {
 
 export function putPage(page: PageObjectResponse) {
   cachedPages[page.id] = page
+}
+
+export function clearPages() {
+  cachedPages = {}
 }
