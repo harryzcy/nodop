@@ -9,6 +9,7 @@ import {
   PartialPageObjectResponse,
 } from '@notionhq/client/build/src/api-endpoints.js'
 import cache from '../utils/cache.js'
+import * as notionCache from './cache.js'
 
 export const notion = new Client({ auth: process.env.NOTION_KEY })
 
@@ -57,8 +58,6 @@ export async function getNewPagesFromDatabase(
   databaseId: string,
   events: Set<string> = null,
 ): Promise<Array<PageObjectResponse>> {
-  // TODO: use an in-memory store to avoid duplicates
-
   let filter = null
   if (eventsContainsOnly(events, 'create', 'update')) {
     filter = {
@@ -85,9 +84,20 @@ export async function getNewPagesFromDatabase(
     throw error
   }
 
-  return pages.filter((page): page is PageObjectResponse => {
-    return isFullPage(page)
+  const pageResponse = pages.filter((page): page is PageObjectResponse => {
+    if (!isFullPage(page)) return false
+
+    const cachedPage = notionCache.getPage(page.id)
+    if (cachedPage !== null && cachedPage.last_edited_time === page.last_edited_time) {
+      // page hasn't changed from last query
+      return false
+    }
+
+    notionCache.putPage(page)
+    return true
   })
+
+  return pageResponse
 }
 
 export async function getPageProperty(pageId: string, propertyID: string) {
@@ -104,7 +114,7 @@ export async function setPageProperty(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any,
 ) {
-  await notion.pages.update({
+  const page = await notion.pages.update({
     page_id: pageId,
     properties: {
       [propertyName]: {
@@ -114,4 +124,8 @@ export async function setPageProperty(
       },
     },
   })
+
+  if (isFullPage(page)) {
+    notionCache.putPage(page)
+  }
 }

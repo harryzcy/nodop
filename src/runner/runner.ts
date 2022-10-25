@@ -6,6 +6,7 @@ import { Configuration, ConfigurationIndex, Job } from '../utils/config.js'
 import { evaluate } from '../expression/expr.js'
 import { getIntFromEnv } from '../utils/env_setting.js'
 import { getLogger } from '../utils/logger.js'
+import * as notionCache from '../notion/cache.js'
 
 // exec is a function that executes a bash command
 const exec = util.promisify(child_process.exec)
@@ -64,6 +65,8 @@ export async function runWorkflow(index: ConfigurationIndex): Promise<number> {
     const wait = await runWorkflowForDB(databaseId, value.on, value.configs)
     if (wait > 0) return wait
   }
+
+  notionCache.cleanupPages()
   return 0
 }
 
