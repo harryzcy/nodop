@@ -86,17 +86,25 @@ export async function getNewPagesFromDatabase(
     throw error
   }
 
-  return pages.filter((page): page is PageObjectResponse => {
+  const pageResponse = pages.filter((page): page is PageObjectResponse => {
     if (!isFullPage(page)) return false
 
     const cachedPage = notionCache.getPage(page.id)
     if (cachedPage !== null && cachedPage.last_edited_time === page.last_edited_time) {
+      // page hasn't changed from last query
       return false
     }
 
-    notionCache.putPage(page)
     return true
   })
+
+  // cache pages
+  notionCache.clearPages()
+  pageResponse.forEach(page => {
+    notionCache.putPage(page)
+  })
+
+  return pageResponse
 }
 
 export async function getPageProperty(pageId: string, propertyID: string) {
