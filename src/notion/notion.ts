@@ -58,8 +58,6 @@ export async function getNewPagesFromDatabase(
   databaseId: string,
   events: Set<string> = null,
 ): Promise<Array<PageObjectResponse>> {
-  // TODO: use an in-memory store to avoid duplicates
-
   let filter = null
   if (eventsContainsOnly(events, 'create', 'update')) {
     filter = {
@@ -99,7 +97,7 @@ export async function getNewPagesFromDatabase(
   })
 
   // cache pages
-  notionCache.clearPages()
+  notionCache.clearPages() // old pages are no longer relevant
   pageResponse.forEach(page => {
     notionCache.putPage(page)
   })
@@ -121,7 +119,7 @@ export async function setPageProperty(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any,
 ) {
-  await notion.pages.update({
+  const page = await notion.pages.update({
     page_id: pageId,
     properties: {
       [propertyName]: {
@@ -131,4 +129,8 @@ export async function setPageProperty(
       },
     },
   })
+
+  if (isFullPage(page)) {
+    notionCache.putPage(page)
+  }
 }
