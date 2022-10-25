@@ -93,13 +93,8 @@ export async function getNewPagesFromDatabase(
       return false
     }
 
-    return true
-  })
-
-  // cache pages
-  notionCache.clearPages() // old pages are no longer relevant
-  pageResponse.forEach(page => {
     notionCache.putPage(page)
+    return true
   })
 
   return pageResponse
