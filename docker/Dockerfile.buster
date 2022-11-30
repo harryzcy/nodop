@@ -1,4 +1,4 @@
-FROM node:19.1.0-buster as base
+FROM node:19.2.0-buster as base
 
 FROM base as builder
 
