@@ -101,6 +101,75 @@ export class PropertyValue extends CustomValue {
   }
 }
 
+export class TimeValue {
+  type: 'time'
+  time: Date
+
+  constructor(time: Date) {
+    this.type = 'time'
+    this.time = time
+  }
+
+  year(): number {
+    return this.time.getFullYear()
+  }
+
+  month(): number {
+    // months are 1-indexed, so add 1
+    return this.time.getMonth() + 1
+  }
+
+  day(): number {
+    return this.time.getDate()
+  }
+
+  weekday(): number {
+    return this.time.getDay()
+  }
+
+  hour(): number {
+    return this.time.getHours()
+  }
+
+  minute(): number {
+    return this.time.getMinutes()
+  }
+
+  second(): number {
+    return this.time.getSeconds()
+  }
+
+  is_before(other: TimeValue): boolean {
+    return this.time < other.time
+  }
+
+  is_after(other: TimeValue): boolean {
+    return this.time > other.time
+  }
+
+  is_same(other: TimeValue): boolean {
+    return this.time.getTime() === other.time.getTime()
+  }
+
+  is_same_year(other: TimeValue): boolean {
+    return this.year() === other.year()
+  }
+
+  is_same_month(other: TimeValue): boolean {
+    return (
+      this.year() === other.year() && this.month() === other.month()
+    )
+  }
+
+  is_same_day(other: TimeValue): boolean {
+    return (
+      this.year() === other.year() &&
+      this.month() === other.month() &&
+      this.day() === other.day()
+    )
+  }
+}
+
 export class ObjectValue {
   type: 'object'
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

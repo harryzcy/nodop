@@ -9,7 +9,7 @@ import {
   Identifier,
 } from './parser.js'
 import { TokenType } from './scanner.js'
-import { CustomValue, ObjectValue, PageValue } from './objects.js'
+import { CustomValue, ObjectValue, PageValue, TimeValue } from './objects.js'
 
 export async function evaluate(
   page: PageObjectResponse,
@@ -84,6 +84,13 @@ async function evalCallExpression(
     }
     const value = await evalExpression(page, e.args[0])
     return value !== null && value !== ''
+  }
+
+  if (e.func === 'now') {
+    if (e.args.length !== 0) {
+      throw new Error('now takes no argument')
+    }
+    return new TimeValue(new Date())
   }
 
   throw new Error(`Unknown call expression: ${e.func}`)
