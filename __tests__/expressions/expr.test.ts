@@ -29,6 +29,7 @@ describe('evaluate', () => {
 
   it('call expressions', async () => {
     expect(await evaluate(null, 'is_empty("")')).toBe(true)
+    expect(await evaluate(null, 'is_not_empty("foo")')).toBe(true)
   })
 
   it('actual page', async () => {
@@ -158,6 +159,10 @@ describe('evaluate', () => {
     // is_empty
     expect(
       await evaluate(page, 'page.get_property("null_select").is_empty()'),
+    ).toBe(true)
+    // is_not_empty
+    expect(
+      await evaluate(page, 'page.get_property("Status").is_not_empty()'),
     ).toBe(true)
 
     // is_type
