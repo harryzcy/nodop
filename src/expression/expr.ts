@@ -9,7 +9,7 @@ import {
   Identifier,
 } from './parser.js'
 import { TokenType } from './scanner.js'
-import { CustomValue, ObjectValue, PageValue, TimeValue } from './objects.js'
+import { CustomValue, NotionValue, ObjectValue, PageValue, TimeValue } from './objects.js'
 
 export async function evaluate(
   page: PageObjectResponse,
@@ -108,7 +108,7 @@ async function evalMemberExpression(
     }
 
     if (e.property.type === 'identifier') {
-      if (value instanceof CustomValue) {
+      if (value instanceof NotionValue) {
         return value.get_field(e.property.value)
       }
 

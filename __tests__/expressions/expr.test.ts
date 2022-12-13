@@ -1,5 +1,6 @@
 import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints.js'
 import { evaluate } from '../../src/expression/expr.js'
+import { TimeValue } from '../../src/expression/objects.js'
 import * as notion from '../../src/notion/notion.js'
 
 jest.mock('../../src/notion/notion.js')
@@ -30,6 +31,22 @@ describe('evaluate', () => {
   it('call expressions', async () => {
     expect(await evaluate(null, 'is_empty("")')).toBe(true)
     expect(await evaluate(null, 'is_not_empty("foo")')).toBe(true)
+  })
+
+  it('call expressions: time', async () => {
+    jest.useFakeTimers()
+    jest.setSystemTime(new Date('2022-01-01 00:00:00'))
+
+    expect(await evaluate(null, 'now()')).toBeInstanceOf(TimeValue)
+    expect(await evaluate(null, 'now().year')).toBe(2022)
+    expect(await evaluate(null, 'now().month')).toBe(1)
+    expect(await evaluate(null, 'now().day')).toBe(1)
+    expect(await evaluate(null, 'now().hour')).toBe(0)
+    expect(await evaluate(null, 'now().minute')).toBe(0)
+    expect(await evaluate(null, 'now().second')).toBe(0)
+    expect(await evaluate(null, 'now().weekday')).toBe(6)
+
+    jest.useRealTimers()
   })
 
   it('actual page', async () => {

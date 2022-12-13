@@ -1,7 +1,9 @@
 import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints.js'
 import { getPageProperty, setPageProperty } from '../notion/notion.js'
 
-export class CustomValue {
+export class CustomValue {}
+
+export class NotionValue extends CustomValue {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any
 
@@ -10,7 +12,7 @@ export class CustomValue {
   }
 }
 
-export class PageValue extends CustomValue {
+export class PageValue extends NotionValue {
   type: 'page'
   declare value: PageObjectResponse
 
@@ -33,7 +35,7 @@ export class PageValue extends CustomValue {
   }
 }
 
-export class PropertyValue extends CustomValue {
+export class PropertyValue extends NotionValue {
   type: 'property'
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -101,41 +103,42 @@ export class PropertyValue extends CustomValue {
   }
 }
 
-export class TimeValue {
+export class TimeValue extends CustomValue {
   type: 'time'
   time: Date
 
   constructor(time: Date) {
+    super()
     this.type = 'time'
     this.time = time
   }
 
-  year(): number {
+  get year(): number {
     return this.time.getFullYear()
   }
 
-  month(): number {
+  get month(): number {
     // months are 1-indexed, so add 1
     return this.time.getMonth() + 1
   }
 
-  day(): number {
+  get day(): number {
     return this.time.getDate()
   }
 
-  weekday(): number {
+  get weekday(): number {
     return this.time.getDay()
   }
 
-  hour(): number {
+  get hour(): number {
     return this.time.getHours()
   }
 
-  minute(): number {
+  get minute(): number {
     return this.time.getMinutes()
   }
 
-  second(): number {
+  get second(): number {
     return this.time.getSeconds()
   }
 
@@ -152,20 +155,20 @@ export class TimeValue {
   }
 
   is_same_year(other: TimeValue): boolean {
-    return this.year() === other.year()
+    return this.year === other.year
   }
 
   is_same_month(other: TimeValue): boolean {
     return (
-      this.year() === other.year() && this.month() === other.month()
+      this.year === other.year && this.month === other.month
     )
   }
 
   is_same_day(other: TimeValue): boolean {
     return (
-      this.year() === other.year() &&
-      this.month() === other.month() &&
-      this.day() === other.day()
+      this.year === other.year &&
+      this.month === other.month &&
+      this.day === other.day
     )
   }
 }
