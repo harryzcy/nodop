@@ -74,18 +74,8 @@ async function evalCallExpression(
     if (e.args.length !== 1) {
       throw new Error('is_empty takes exactly one argument')
     }
-    const property = await evalExpression(page, e.args[0])
-
-    // check if the value for page property is empty
-    if (typeof property === 'object') {
-      if (property === null) return true
-      if ('type' in property) {
-        return (
-          property[property.type] === null || property[property.type] === ''
-        )
-      }
-    }
-    return property === null || property === ''
+    const value = await evalExpression(page, e.args[0])
+    return value === null || value === ''
   }
 
   if (e.func === 'is_not_empty') {

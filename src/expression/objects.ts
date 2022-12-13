@@ -59,6 +59,10 @@ export class PropertyValue extends CustomValue {
     return false
   }
 
+  is_not_empty(): boolean {
+    return !this.is_empty()
+  }
+
   get_value(): string {
     if (this.is_empty()) return ''
     if (!this.value || !('type' in this.value)) return ''
