@@ -31,3 +31,4 @@ Some additional addon methods are:
 
 - `is_type(<expected_type_as_string>)`: returns a boolean
 - `is_empty()`: returns a boolean indicating if property is empty
+- `is_not_empty()`: returns a boolean indicating if property is not empty
