@@ -9,7 +9,7 @@ import {
   Identifier,
 } from './parser.js'
 import { TokenType } from './scanner.js'
-import { CustomValue, ObjectValue, PageValue } from './objects.js'
+import { CustomValue, NotionValue, ObjectValue, PageValue, TimeValue } from './objects.js'
 
 export async function evaluate(
   page: PageObjectResponse,
@@ -86,6 +86,13 @@ async function evalCallExpression(
     return value !== null && value !== ''
   }
 
+  if (e.func === 'now') {
+    if (e.args.length !== 0) {
+      throw new Error('now takes no argument')
+    }
+    return new TimeValue(new Date())
+  }
+
   throw new Error(`Unknown call expression: ${e.func}`)
 }
 
@@ -101,7 +108,7 @@ async function evalMemberExpression(
     }
 
     if (e.property.type === 'identifier') {
-      if (value instanceof CustomValue) {
+      if (value instanceof NotionValue) {
         return value.get_field(e.property.value)
       }
 
