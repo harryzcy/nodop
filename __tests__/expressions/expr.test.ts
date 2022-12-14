@@ -36,6 +36,13 @@ describe('evaluate', () => {
         && false`,
       ),
     ).toBe(false)
+    expect(
+      await evaluate(
+        null,
+        `(true 
+        && false)`,
+      ),
+    ).toBe(false)
   })
 
   it('call expressions', async () => {
