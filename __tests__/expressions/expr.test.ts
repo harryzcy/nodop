@@ -28,6 +28,23 @@ describe('evaluate', () => {
     ).toBe(true)
   })
 
+  it('multi line', async () => {
+    expect(
+      await evaluate(
+        null,
+        `true 
+        && false`,
+      ),
+    ).toBe(false)
+    expect(
+      await evaluate(
+        null,
+        `(true 
+        && false)`,
+      ),
+    ).toBe(false)
+  })
+
   it('call expressions', async () => {
     expect(await evaluate(null, 'is_empty("")')).toBe(true)
     expect(await evaluate(null, 'is_not_empty("foo")')).toBe(true)

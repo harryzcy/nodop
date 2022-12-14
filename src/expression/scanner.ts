@@ -104,7 +104,7 @@ export class Scanner {
   }
 
   isWhitespace(): boolean {
-    return this.currentChar === ' ' || this.currentChar === '\t'
+    return this.currentChar === ' ' || this.currentChar === '\t' || this.currentChar === '\n'
   }
 
   isDivider(): boolean {
