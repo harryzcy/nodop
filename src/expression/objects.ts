@@ -1,16 +1,9 @@
-import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints.js'
+import { MultiSelectPropertyItemObjectResponse, PageObjectResponse, PropertyItemObjectResponse, TitlePropertyItemObjectResponse } from '@notionhq/client/build/src/api-endpoints.js'
 import { getPageProperty, setPageProperty } from '../notion/notion.js'
 
-export class CustomValue {}
+export class CustomValue { }
 
-export class NotionValue extends CustomValue {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  value: any
-
-  get_field(name: string) {
-    return this.value[name]
-  }
-}
+export class NotionValue extends CustomValue { }
 
 export class PageValue extends NotionValue {
   type: 'page'
@@ -25,7 +18,7 @@ export class PageValue extends NotionValue {
   async get_property(name: string): Promise<PropertyValue> {
     const propertyObject = this.value.properties[name]
     const value = await getPageProperty(this.value.id, propertyObject.id)
-    return new PropertyValue(value)
+    return new PropertyValue(propertyObject.id, value)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -37,28 +30,35 @@ export class PageValue extends NotionValue {
 
 export class PropertyValue extends NotionValue {
   type: 'property'
+  id: string
+  property_type: string
+  property_value: PropertyItemObjectResponse | PropertyItemObjectResponse[]
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor(property: any) {
+  constructor(id: string, property: PropertyItemObjectResponse | PropertyItemObjectResponse[]) {
     super()
     this.type = 'property'
-    this.value = property
+    this.id = id
+    this.property_value = property
+    if (Array.isArray(property)) {
+      this.property_type = property[0].type
+    } else {
+      this.property_type = property.type
+    }
   }
 
   is_type(expectedType: string): boolean {
-    return (
-      this.value && 'type' in this.value && this.value.type === expectedType
-    )
+    return this.property_type === expectedType
   }
 
   is_empty(): boolean {
-    if (this.value && 'type' in this.value) {
-      return (
-        this.value[this.value.type] === null ||
-        this.value[this.value.type] === ''
-      )
+    if (Array.isArray(this.property_value)) {
+      return this.property_value.length === 0
     }
-    return false
+
+    return (
+      this.property_value[this.property_value.type] === null ||
+      this.property_value[this.property_value.type] === ''
+    )
   }
 
   is_not_empty(): boolean {
@@ -66,35 +66,37 @@ export class PropertyValue extends NotionValue {
   }
 
   get_value(): string {
-    if (this.is_empty()) return ''
-    if (!this.value || !('type' in this.value)) return ''
+    if (Array.isArray(this.property_value)) {
+      return this.property_value.map((item) => {
+        return item[item.type]
+      }).join('')
+    }
 
-    return this.value[this.value.type]
+    if (this.is_empty()) return ''
+    return this.property_value[this.property_value.type]
   }
 
   contains(value: string): boolean {
     if (this.is_empty()) return false
-    if (!this.value || !('type' in this.value)) return false
 
-    if (this.value.type === 'multi_select') {
-      return this.value.multi_select.some(
+    if (this.property_type === 'multi_select') {
+      return (<MultiSelectPropertyItemObjectResponse>this.property_value).multi_select.some(
         (select: { id: string; name: string; color: string }) => {
           return select.name === value
         },
       )
     }
-    if (this.value.type === 'property_item') {
-      if (this.value.property_item.type === 'title') {
-        const fullTitle = this.value.results
-          .map((result: { title: { plain_text: string } }) => {
-            return result.title.plain_text
-          })
-          .join('')
-        return fullTitle.includes(value)
-      }
+
+    if (this.property_type === 'title') {
+      const fullTitle = (<TitlePropertyItemObjectResponse[]> this.property_value)
+        .map((result: { title: { plain_text: string } }) => {
+          return result.title.plain_text
+        })
+        .join('')
+      return fullTitle.includes(value)
     }
     throw new Error(
-      `contains is not implemented for property type ${this.value.type}`,
+      `contains is not implemented for property type ${this.property_type}`,
     )
   }
 

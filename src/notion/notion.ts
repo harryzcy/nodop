@@ -7,6 +7,8 @@ import {
 import {
   PageObjectResponse,
   PartialPageObjectResponse,
+  PropertyItemListResponse,
+  PropertyItemObjectResponse,
 } from '@notionhq/client/build/src/api-endpoints.js'
 import cache from '../utils/cache.js'
 import * as notionCache from './cache.js'
@@ -100,12 +102,32 @@ export async function getNewPagesFromDatabase(
   return pageResponse
 }
 
-export async function getPageProperty(pageId: string, propertyID: string) {
-  // TODO: support getting paginated results
-  return await notion.pages.properties.retrieve({
+export async function getPageProperty(pageId: string, propertyId: string): Promise<PropertyItemObjectResponse | PropertyItemObjectResponse[]> {
+  const propertyItem = await notion.pages.properties.retrieve({
     page_id: pageId,
-    property_id: propertyID,
+    property_id: propertyId,
   })
+  if (propertyItem.object === "property_item") {
+    return propertyItem
+  }
+
+  // Property is paginated.
+  let nextCursor = propertyItem.next_cursor
+  const results = propertyItem.results
+
+  while (nextCursor !== null) {
+    // assert PropertyItemListResponse type
+    const propertyItem = <PropertyItemListResponse> await notion.pages.properties.retrieve({
+      page_id: pageId,
+      property_id: propertyId,
+      start_cursor: nextCursor,
+    })
+
+    nextCursor = propertyItem.next_cursor
+    results.push(...propertyItem.results)
+  }
+
+  return results
 }
 
 export async function setPageProperty(
