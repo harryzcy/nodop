@@ -109,7 +109,7 @@ async function evalMemberExpression(
 
     if (e.property.type === 'identifier') {
       if (value instanceof NotionValue) {
-        return value.get_field(e.property.value)
+        throw new Error(`Cannot access member of NotionValue: ${e.property.value}`)
       }
 
       return value[e.property.value]
