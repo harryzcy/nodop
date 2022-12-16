@@ -69,33 +69,20 @@ describe('evaluate', () => {
   it('actual page', async () => {
     mockedNotion.getPageProperty.mockImplementation(async (_, propertyID) => {
       if (propertyID == '1-title') {
-        return {
-          object: 'list',
-          id: propertyID,
-          results: [
-            {
-              object: 'property_item',
-              type: 'title',
-              id: 'title',
-              title: {
-                type: 'text',
-                plain_text: 'example_title',
-                annotations: null,
-                text: null,
-                href: null,
-              },
-            },
-          ],
-          next_cursor: null,
-          has_more: false,
-          type: 'property_item',
-          property_item: {
-            id: 'title',
-            next_url: null,
+        return [
+          {
+            object: 'property_item',
             type: 'title',
-            title: {},
+            id: 'title',
+            title: {
+              type: 'text',
+              plain_text: 'example_title',
+              annotations: null,
+              text: null,
+              href: null,
+            },
           },
-        }
+        ]
       }
       if (propertyID == '2-select') {
         return {
