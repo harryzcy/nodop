@@ -1,6 +1,6 @@
 {
   "name": "nodop",
-  "version": "0.2.2",
+  "version": "0.5.0",
   "description": "Notion Database Operator",
   "type": "module",
   "homepage": "https://github.com/harryzcy/nodop#readme",
