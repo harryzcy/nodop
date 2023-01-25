@@ -27,7 +27,7 @@
     "winston": "3.8.2"
   },
   "devDependencies": {
-    "@types/jest": "29.2.6",
+    "@types/jest": "29.4.0",
     "@types/js-yaml": "4.0.5",
     "@types/node": "18.11.18",
     "@typescript-eslint/eslint-plugin": "5.49.0",
