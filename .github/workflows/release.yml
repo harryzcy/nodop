@@ -90,7 +90,7 @@ jobs:
 
       - name: Build without push
         if: github.event_name == 'workflow_dispatch'
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: .
           file: ${{ env.DOCKERFILE_NAME }}
@@ -100,7 +100,7 @@ jobs:
 
       - name: Build and push
         if: github.event_name == 'push'
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: .
           file: ${{ env.DOCKERFILE_NAME }}
