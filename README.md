@@ -17,7 +17,7 @@ docker run -v PATH/TO/CONFIG/:app/conf/ -v PATH/TO/CACHE/:app/cache/ --env NOTIO
 ```
 
 - `PATH/TO/CONFIG/` should point to a directory holding workflow files according to [this syntax](#workflow-syntax).
-- `PATH/TO/CONFIG/` (optional) should point to a directory for cache
+- `PATH/TO/CACHE/` (optional) should point to a directory for cache
 
   If enabled, timestamp of the last runtime will be stored, so when Docker is restarted, it can catch up from last timestamp.
 
