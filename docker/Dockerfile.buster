@@ -1,4 +1,4 @@
-FROM node:18.14.2-buster as base
+FROM node:18.15.0-buster as base
 
 FROM base as builder
 
