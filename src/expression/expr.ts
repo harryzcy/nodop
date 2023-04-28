@@ -16,7 +16,6 @@ import {
   PageValue,
   TimeValue,
 } from './objects.js'
-import { getLogger } from '../utils/logger.js'
 
 export async function evaluate(
   page: PageObjectResponse,
@@ -24,13 +23,7 @@ export async function evaluate(
 ): Promise<boolean | null> {
   const parser = new Parser(s)
   const expr = parser.parse()
-  try {
-    return await evalExpression(page, expr)
-  } catch (e) {
-    const logger = getLogger()
-    logger.error(`failed to evaluate expression: ${s}: ${e}`)
-    return null
-  }
+  return await evalExpression(page, expr)
 }
 
 async function evalExpression(
