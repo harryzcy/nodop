@@ -9,7 +9,13 @@ import {
   Identifier,
 } from './parser.js'
 import { TokenType } from './scanner.js'
-import { CustomValue, NotionValue, ObjectValue, PageValue, TimeValue } from './objects.js'
+import {
+  CustomValue,
+  NotionValue,
+  ObjectValue,
+  PageValue,
+  TimeValue,
+} from './objects.js'
 
 export async function evaluate(
   page: PageObjectResponse,
@@ -109,7 +115,9 @@ async function evalMemberExpression(
 
     if (e.property.type === 'identifier') {
       if (value instanceof NotionValue) {
-        throw new Error(`Cannot access member of NotionValue: ${e.property.value}`)
+        throw new Error(
+          `Cannot access member of NotionValue: ${e.property.value}`,
+        )
       }
 
       return value[e.property.value]
