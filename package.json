@@ -23,7 +23,7 @@
   "dependencies": {
     "@notionhq/client": "2.2.5",
     "js-yaml": "4.1.0",
-    "tslib": "2.5.3",
+    "tslib": "2.6.0",
     "winston": "3.9.0"
   },
   "devDependencies": {
