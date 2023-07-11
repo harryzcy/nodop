@@ -165,6 +165,7 @@ describe('evaluate', () => {
       last_edited_time: '2020-01-01T00:00:00.000Z',
       archived: false,
       url: 'https://notion.so/example_title',
+      public_url: 'https://notion.so/example_title',
       icon: {
         type: 'emoji',
         emoji: '😀',
