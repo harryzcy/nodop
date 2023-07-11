@@ -30,7 +30,8 @@ const page: PageObjectResponse = {
   created_time: '',
   last_edited_time: '',
   archived: false,
-  url: ''
+  url: '',
+  public_url: ''
 }
 
 describe('cached pages operations', () => {
