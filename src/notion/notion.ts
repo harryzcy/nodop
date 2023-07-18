@@ -6,6 +6,7 @@ import {
 } from '@notionhq/client'
 import {
   PageObjectResponse,
+  PartialDatabaseObjectResponse,
   PartialPageObjectResponse,
   PropertyItemListResponse,
   PropertyItemObjectResponse,
@@ -70,7 +71,7 @@ export async function getNewPagesFromDatabase(
     }
   }
 
-  let pages: Array<PartialPageObjectResponse>
+  let pages: Array<PartialPageObjectResponse | PartialDatabaseObjectResponse>
   try {
     pages = await collectPaginatedAPI(notion.databases.query, {
       database_id: databaseId,
@@ -87,7 +88,7 @@ export async function getNewPagesFromDatabase(
   }
 
   const pageResponse = pages.filter((page): page is PageObjectResponse => {
-    if (!isFullPage(page)) return false
+    if (page.object != "page" || !isFullPage(page)) return false
 
     const cachedPage = notionCache.getPage(page.id)
     if (cachedPage !== null && cachedPage.last_edited_time === page.last_edited_time) {
