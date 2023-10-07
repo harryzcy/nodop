@@ -24,7 +24,7 @@
     "@notionhq/client": "2.2.13",
     "js-yaml": "4.1.0",
     "tslib": "2.6.2",
-    "winston": "3.10.0"
+    "winston": "3.11.0"
   },
   "devDependencies": {
     "@types/jest": "29.5.5",
