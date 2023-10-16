@@ -3,7 +3,7 @@ name: Releases
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
   workflow_dispatch:
 
 jobs:
@@ -35,7 +35,7 @@ jobs:
     name: Build Docker Image
     strategy:
       matrix:
-        base-image: [alpine3.17, bullseye, buster]
+        base-image: [alpine3.17, bookworm, bullseye, buster]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
