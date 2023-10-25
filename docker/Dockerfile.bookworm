@@ -1,4 +1,4 @@
-FROM node:20.8.1-bookworm as base
+FROM node:20.9.0-bookworm as base
 
 FROM base as builder
 
