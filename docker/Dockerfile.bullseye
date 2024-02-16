@@ -22,4 +22,6 @@ COPY --from=builder /app/build ./build
 ENV CONFIG_PATH /app/conf
 ENV CACHE_DIR /app/cache
 
+HEALTHCHECK NONE
+
 CMD ["node", "build/src/main.js", "--daemon"]
