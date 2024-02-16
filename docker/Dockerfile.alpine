@@ -17,10 +17,10 @@ WORKDIR /app
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 USER appuser
 
-COPY package.json package-lock.json ./
+COPY --chown=appuser:appgroup package.json package-lock.json ./
 RUN npm ci --omit=dev --no-audit
 
-COPY --from=builder /app/build ./build
+COPY --from=builder --chown=appuser:appgroup /app/build ./build
 
 ENV CONFIG_PATH /app/conf
 ENV CACHE_DIR /app/cache
