@@ -2,6 +2,9 @@ name: Docker CI
 
 on: [push, pull_request]
 
+permissions:
+  contents: read
+
 jobs:
   alpine:
     name: Build alpine
@@ -10,6 +13,14 @@ jobs:
       - uses: actions/checkout@v4
       - name: Build Docker Image
         run: docker build -t nodop:alpine -f docker/Dockerfile.alpine .
+
+  bookworm:
+    name: Build bookworm
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Docker Image
+        run: docker build -t nodop:bookworm -f docker/Dockerfile.bookworm .
 
   bullseye:
     name: Build bullseye
