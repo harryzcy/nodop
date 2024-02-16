@@ -12,10 +12,10 @@ RUN npm run build:release
 
 FROM base
 
-WORKDIR /app
-
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 USER appuser
+
+WORKDIR /app
 
 COPY --chown=appuser:appgroup package.json package-lock.json ./
 RUN npm ci --omit=dev --no-audit
