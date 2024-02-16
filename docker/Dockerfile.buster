@@ -14,7 +14,7 @@ FROM base
 
 WORKDIR /app
 
-RUN useradd -m nodop
+RUN useradd -m appuser
 USER appuser
 
 COPY package.json package-lock.json ./
