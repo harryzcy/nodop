@@ -12,7 +12,8 @@ RUN npm run build:release
 
 FROM base
 
-RUN groupadd appgroup && useradd -g appgroup -M appuser
+RUN groupadd appgroup && \
+  useradd -g appgroup -m appuser
 USER appuser
 
 WORKDIR /app

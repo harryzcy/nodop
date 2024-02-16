@@ -12,7 +12,8 @@ RUN npm run build:release
 
 FROM base
 
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+RUN addgroup -S appgroup && \
+  adduser -S appuser -G appgroup
 USER appuser
 
 WORKDIR /app
