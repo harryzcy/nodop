@@ -14,6 +14,9 @@ FROM base
 
 WORKDIR /app
 
+RUN useradd -m nodop
+USER appuser
+
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev --no-audit
 
