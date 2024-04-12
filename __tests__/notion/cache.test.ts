@@ -1,37 +1,43 @@
 import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints.js'
-import { getPage, putPage, clearPages, cleanupPages } from '../../src/notion/cache.js'
+import {
+  getPage,
+  putPage,
+  clearPages,
+  cleanupPages,
+} from '../../src/notion/cache.js'
 
 const page: PageObjectResponse = {
   object: 'page',
   parent: {
     type: 'database_id',
-    database_id: ''
+    database_id: '',
   },
   properties: undefined,
   icon: {
     type: 'emoji',
-    emoji: '😀'
+    emoji: '😀',
   },
   cover: {
     type: 'external',
     external: {
-      url: ''
-    }
+      url: '',
+    },
   },
   created_by: {
     id: '',
-    object: 'user'
+    object: 'user',
   },
   last_edited_by: {
     id: '',
-    object: 'user'
+    object: 'user',
   },
   id: '',
   created_time: '',
   last_edited_time: '',
   archived: false,
   url: '',
-  public_url: ''
+  public_url: '',
+  in_trash: false,
 }
 
 describe('cached pages operations', () => {
