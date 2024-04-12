@@ -176,6 +176,7 @@ describe('evaluate', () => {
           url: '',
         },
       },
+      in_trash: false,
     }
 
     // is_empty
