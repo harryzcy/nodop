@@ -23,7 +23,7 @@ export enum TokenType {
   RIGHT_BRACKET, // ]
   COMMA, // ,
 
-  EOT, // end of token
+  EOT // end of token
 }
 
 export class Token {
@@ -104,7 +104,11 @@ export class Scanner {
   }
 
   isWhitespace(): boolean {
-    return this.currentChar === ' ' || this.currentChar === '\t' || this.currentChar === '\n'
+    return (
+      this.currentChar === ' ' ||
+      this.currentChar === '\t' ||
+      this.currentChar === '\n'
+    )
   }
 
   isDivider(): boolean {

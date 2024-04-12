@@ -9,11 +9,11 @@ describe('notion client', () => {
 describe('eventsContainsOnly', () => {
   it('returns true if events contains only types', () => {
     expect(eventsContainsOnly(new Set(['create']), 'create', 'update')).toBe(
-      true,
+      true
     )
 
     expect(
-      eventsContainsOnly(new Set(['create', 'update']), 'create', 'update'),
+      eventsContainsOnly(new Set(['create', 'update']), 'create', 'update')
     ).toBe(true)
   })
 

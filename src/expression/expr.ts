@@ -6,7 +6,7 @@ import {
   UnaryExpression,
   Expression,
   Parser,
-  Identifier,
+  Identifier
 } from './parser.js'
 import { TokenType } from './scanner.js'
 import {
@@ -14,12 +14,12 @@ import {
   NotionValue,
   ObjectValue,
   PageValue,
-  TimeValue,
+  TimeValue
 } from './objects.js'
 
 export async function evaluate(
   page: PageObjectResponse,
-  s: string,
+  s: string
 ): Promise<boolean | null> {
   const parser = new Parser(s)
   const expr = parser.parse()
@@ -28,7 +28,7 @@ export async function evaluate(
 
 async function evalExpression(
   page: PageObjectResponse,
-  e: Expression,
+  e: Expression
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
   if (e.type === 'call_expression') {
@@ -64,7 +64,7 @@ async function evalExpression(
 
 async function evalCallExpression(
   page: PageObjectResponse,
-  e: CallExpression,
+  e: CallExpression
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
   if (e.func === 'is_type') {
@@ -104,7 +104,7 @@ async function evalCallExpression(
 
 async function evalMemberExpression(
   page: PageObjectResponse,
-  e: MemberExpression,
+  e: MemberExpression
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
   let value = await evalExpression(page, e.object)
@@ -116,7 +116,7 @@ async function evalMemberExpression(
     if (e.property.type === 'identifier') {
       if (value instanceof NotionValue) {
         throw new Error(
-          `Cannot access member of NotionValue: ${e.property.value}`,
+          `Cannot access member of NotionValue: ${e.property.value}`
         )
       }
 
@@ -127,7 +127,7 @@ async function evalMemberExpression(
       const args = await Promise.all(
         e.property.args.map(async (arg) => {
           return await evalExpression(page, arg)
-        }),
+        })
       )
 
       // default to ObjectValue type
@@ -150,7 +150,7 @@ async function evalMemberExpression(
 
 async function evalBinaryExpression(
   page: PageObjectResponse,
-  e: BinaryExpression,
+  e: BinaryExpression
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
   const left = await evalExpression(page, e.left)
@@ -180,7 +180,7 @@ async function evalBinaryExpression(
 
 async function evalUnaryExpression(
   page: PageObjectResponse,
-  e: UnaryExpression,
+  e: UnaryExpression
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
   const expr = await evalExpression(page, e.expr)

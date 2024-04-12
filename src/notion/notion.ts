@@ -2,14 +2,14 @@ import {
   Client,
   APIErrorCode,
   isFullPage,
-  collectPaginatedAPI,
+  collectPaginatedAPI
 } from '@notionhq/client'
 import {
   PageObjectResponse,
   PartialDatabaseObjectResponse,
   PartialPageObjectResponse,
   PropertyItemListResponse,
-  PropertyItemObjectResponse,
+  PropertyItemObjectResponse
 } from '@notionhq/client/build/src/api-endpoints.js'
 import cache from '../utils/cache.js'
 import * as notionCache from './cache.js'
@@ -59,15 +59,15 @@ export class RateLimitedError extends Error {
 
 export async function getNewPagesFromDatabase(
   databaseId: string,
-  events: Set<string> = null,
+  events: Set<string> = null
 ): Promise<Array<PageObjectResponse>> {
   let filter = null
   if (eventsContainsOnly(events, 'create', 'update')) {
     filter = {
       timestamp: 'last_edited_time',
       last_edited_time: {
-        on_or_after: await getLastISOTime(),
-      },
+        on_or_after: await getLastISOTime()
+      }
     }
   }
 
@@ -75,7 +75,7 @@ export async function getNewPagesFromDatabase(
   try {
     pages = await collectPaginatedAPI(notion.databases.query, {
       database_id: databaseId,
-      filter,
+      filter
     })
   } catch (error) {
     if (error.code === APIErrorCode.RateLimited) {
@@ -88,10 +88,13 @@ export async function getNewPagesFromDatabase(
   }
 
   const pageResponse = pages.filter((page): page is PageObjectResponse => {
-    if (page.object != "page" || !isFullPage(page)) return false
+    if (page.object != 'page' || !isFullPage(page)) return false
 
     const cachedPage = notionCache.getPage(page.id)
-    if (cachedPage !== null && cachedPage.last_edited_time === page.last_edited_time) {
+    if (
+      cachedPage !== null &&
+      cachedPage.last_edited_time === page.last_edited_time
+    ) {
       // page hasn't changed from last query
       return false
     }
@@ -103,12 +106,15 @@ export async function getNewPagesFromDatabase(
   return pageResponse
 }
 
-export async function getPageProperty(pageId: string, propertyId: string): Promise<PropertyItemObjectResponse | PropertyItemObjectResponse[]> {
+export async function getPageProperty(
+  pageId: string,
+  propertyId: string
+): Promise<PropertyItemObjectResponse | PropertyItemObjectResponse[]> {
   const propertyItem = await notion.pages.properties.retrieve({
     page_id: pageId,
-    property_id: propertyId,
+    property_id: propertyId
   })
-  if (propertyItem.object === "property_item") {
+  if (propertyItem.object === 'property_item') {
     return propertyItem
   }
 
@@ -118,11 +124,13 @@ export async function getPageProperty(pageId: string, propertyId: string): Promi
 
   while (nextCursor !== null) {
     // assert PropertyItemListResponse type
-    const propertyItem = <PropertyItemListResponse> await notion.pages.properties.retrieve({
-      page_id: pageId,
-      property_id: propertyId,
-      start_cursor: nextCursor,
-    })
+    const propertyItem = <PropertyItemListResponse>(
+      await notion.pages.properties.retrieve({
+        page_id: pageId,
+        property_id: propertyId,
+        start_cursor: nextCursor
+      })
+    )
 
     nextCursor = propertyItem.next_cursor
     results.push(...propertyItem.results)
@@ -135,17 +143,17 @@ export async function setPageProperty(
   pageId: string,
   propertyName: string,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  value: any,
+  value: any
 ) {
   const page = await notion.pages.update({
     page_id: pageId,
     properties: {
       [propertyName]: {
         select: {
-          name: value,
-        },
-      },
-    },
+          name: value
+        }
+      }
+    }
   })
 
   if (isFullPage(page)) {

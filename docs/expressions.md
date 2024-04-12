@@ -18,24 +18,24 @@ page.set_property('Status', 'TODO') // to set Status to 'TODO'
 
 The Time object represent a date and time. It has the following properties and methods:
 
-| Property | Type | Description |
-| -------- | ---- | ----------- |
-| `year` | number | The year, e.g. 2022 |
-| `month`| number | The month, (January = 1, …) |
-| `day` | number | The day of the month |
+| Property  | Type   | Description                          |
+| --------- | ------ | ------------------------------------ |
+| `year`    | number | The year, e.g. 2022                  |
+| `month`   | number | The month, (January = 1, …)          |
+| `day`     | number | The day of the month                 |
 | `weekday` | number | The day of the week, (Sunday = 0, …) |
-| `hour` | number | The hour |
-| `minute` | number | The minute |
-| `second` | number | The second |
+| `hour`    | number | The hour                             |
+| `minute`  | number | The minute                           |
+| `second`  | number | The second                           |
 
-| Method | Description |
-| ------ | ----------- |
-| `is_before(other: Time)` | Returns true if this time is before `other` time |
-| `is_after(other: Time)` | Returns true if this time is after `other` time |
-| `is_same(other: Time)` | Returns true if this time is the same as `other` time |
-| `is_same_year(other: Time)` | Returns true if this time in the same year as `other` time |
+| Method                       | Description                                                          |
+| ---------------------------- | -------------------------------------------------------------------- |
+| `is_before(other: Time)`     | Returns true if this time is before `other` time                     |
+| `is_after(other: Time)`      | Returns true if this time is after `other` time                      |
+| `is_same(other: Time)`       | Returns true if this time is the same as `other` time                |
+| `is_same_year(other: Time)`  | Returns true if this time in the same year as `other` time           |
 | `is_same_month(other: Time)` | Returns true if this time in the same year and month as `other` time |
-| `is_same_day(other: Time)` | Returns true if this time in the same day as `other` time |
+| `is_same_day(other: Time)`   | Returns true if this time in the same day as `other` time            |
 
 ### Page
 

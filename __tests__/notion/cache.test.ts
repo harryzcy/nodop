@@ -3,33 +3,33 @@ import {
   getPage,
   putPage,
   clearPages,
-  cleanupPages,
+  cleanupPages
 } from '../../src/notion/cache.js'
 
 const page: PageObjectResponse = {
   object: 'page',
   parent: {
     type: 'database_id',
-    database_id: '',
+    database_id: ''
   },
   properties: undefined,
   icon: {
     type: 'emoji',
-    emoji: '😀',
+    emoji: '😀'
   },
   cover: {
     type: 'external',
     external: {
-      url: '',
-    },
+      url: ''
+    }
   },
   created_by: {
     id: '',
-    object: 'user',
+    object: 'user'
   },
   last_edited_by: {
     id: '',
-    object: 'user',
+    object: 'user'
   },
   id: '',
   created_time: '',
@@ -37,7 +37,7 @@ const page: PageObjectResponse = {
   archived: false,
   url: '',
   public_url: '',
-  in_trash: false,
+  in_trash: false
 }
 
 describe('cached pages operations', () => {

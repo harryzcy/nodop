@@ -1,9 +1,12 @@
-import { PageObjectResponse } from "@notionhq/client/build/src/api-endpoints"
+import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints'
 
-let cachedPages: Record<string, {
-  page: PageObjectResponse,
-  ttl: number
-}> = {}
+let cachedPages: Record<
+  string,
+  {
+    page: PageObjectResponse
+    ttl: number
+  }
+> = {}
 
 export function getPage(pageId: string) {
   if (pageId in cachedPages) {
