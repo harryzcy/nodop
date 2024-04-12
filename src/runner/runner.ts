@@ -81,7 +81,7 @@ export async function runWorkflow(index: ConfigurationIndex): Promise<number> {
 async function runWorkflowForDB(
   databaseId: string,
   on: Set<string>,
-  configs: Configuration[],
+  configs: Configuration[]
 ): Promise<number> {
   try {
     const pages = await getNewPagesFromDatabase(databaseId, on)
@@ -127,7 +127,7 @@ async function runJobOnPage(page: PageObjectResponse, job: Job) {
         step: step.name,
         lang: 'bash',
         stdout,
-        stderr,
+        stderr
       })
     } else {
       // 'builtin'
@@ -138,7 +138,7 @@ async function runJobOnPage(page: PageObjectResponse, job: Job) {
         pageId: page.id,
         jobId: job.name,
         step: step.name,
-        lang: 'builtin',
+        lang: 'builtin'
       })
     }
   }

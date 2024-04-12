@@ -5,21 +5,21 @@ describe('parser', () => {
   it('literal', () => {
     expect(new Parser('true').parse()).toStrictEqual({
       type: 'boolean',
-      value: true,
+      value: true
     })
     expect(new Parser('false').parse()).toStrictEqual({
       type: 'boolean',
-      value: false,
+      value: false
     })
 
     expect(new Parser('123').parse()).toStrictEqual({
       type: 'number',
-      value: 123,
+      value: 123
     })
 
     expect(new Parser("'foo'").parse()).toStrictEqual({
       type: 'string',
-      value: 'foo',
+      value: 'foo'
     })
   })
 
@@ -28,25 +28,25 @@ describe('parser', () => {
       type: 'binary_expression',
       left: {
         type: 'boolean',
-        value: true,
+        value: true
       },
       right: {
         type: 'boolean',
-        value: false,
+        value: false
       },
-      operator: TokenType.AND,
+      operator: TokenType.AND
     })
     expect(new Parser('true || false').parse()).toStrictEqual({
       type: 'binary_expression',
       left: {
         type: 'boolean',
-        value: true,
+        value: true
       },
       right: {
         type: 'boolean',
-        value: false,
+        value: false
       },
-      operator: TokenType.OR,
+      operator: TokenType.OR
     })
   })
 
@@ -55,41 +55,41 @@ describe('parser', () => {
       type: 'member_expression',
       object: {
         type: 'identifier',
-        value: 'foo',
+        value: 'foo'
       },
       property: {
         type: 'identifier',
-        value: 'bar',
-      },
+        value: 'bar'
+      }
     })
 
     expect(new Parser('foo.bar()').parse()).toStrictEqual({
       type: 'member_expression',
       object: {
         type: 'identifier',
-        value: 'foo',
+        value: 'foo'
       },
       property: {
         type: 'call_expression',
         func: 'bar',
-        args: [],
-      },
+        args: []
+      }
     })
 
     expect(new Parser('foo.bar("arg1", "arg2")').parse()).toStrictEqual({
       type: 'member_expression',
       object: {
         type: 'identifier',
-        value: 'foo',
+        value: 'foo'
       },
       property: {
         type: 'call_expression',
         func: 'bar',
         args: [
           { type: 'string', value: 'arg1' },
-          { type: 'string', value: 'arg2' },
-        ],
-      },
+          { type: 'string', value: 'arg2' }
+        ]
+      }
     })
   })
 
@@ -100,17 +100,17 @@ describe('parser', () => {
         type: 'member_expression',
         object: {
           type: 'identifier',
-          value: 'foo',
+          value: 'foo'
         },
         property: {
           type: 'identifier',
-          value: 'bar',
-        },
+          value: 'bar'
+        }
       },
       property: {
         type: 'identifier',
-        value: 'value',
-      },
+        value: 'value'
+      }
     })
 
     expect(new Parser('foo.bar().value').parse()).toStrictEqual({
@@ -119,41 +119,41 @@ describe('parser', () => {
         type: 'member_expression',
         object: {
           type: 'identifier',
-          value: 'foo',
+          value: 'foo'
         },
         property: {
           type: 'call_expression',
           func: 'bar',
-          args: [],
-        },
+          args: []
+        }
       },
       property: {
         type: 'identifier',
-        value: 'value',
-      },
+        value: 'value'
+      }
     })
 
     expect(
-      new Parser('page.get_property("foo").is_empty()').parse(),
+      new Parser('page.get_property("foo").is_empty()').parse()
     ).toStrictEqual({
       type: 'member_expression',
       object: {
         type: 'member_expression',
         object: {
           type: 'identifier',
-          value: 'page',
+          value: 'page'
         },
         property: {
           type: 'call_expression',
           func: 'get_property',
-          args: [{ type: 'string', value: 'foo' }],
-        },
+          args: [{ type: 'string', value: 'foo' }]
+        }
       },
       property: {
         type: 'call_expression',
         func: 'is_empty',
-        args: [],
-      },
+        args: []
+      }
     })
   })
 })

@@ -83,7 +83,7 @@ export function validateConfig(src: ConfigYaml): {
           if (step.lang) {
             if (step.lang !== 'bash' && step.lang !== 'builtin') {
               errors.push(
-                `jobs.<job_id>.steps[${stepIdx}].lang must be either "bash" or "builtin"`,
+                `jobs.<job_id>.steps[${stepIdx}].lang must be either "bash" or "builtin"`
               )
             }
           }
@@ -97,7 +97,7 @@ export function validateConfig(src: ConfigYaml): {
 
   return {
     success: errors.length === 0,
-    errors: errors.join(', '),
+    errors: errors.join(', ')
   }
 }
 
@@ -136,14 +136,14 @@ export function parseConfig(filename: string, content: string): Configuration {
         run: step.run
           .trim()
           .split('\n')
-          .map((line) => line.trim()),
+          .map((line) => line.trim())
       })
     }
 
     jobs[jobId] = {
       name: job.name,
       if: job.if,
-      steps,
+      steps
     }
   }
 
@@ -151,7 +151,7 @@ export function parseConfig(filename: string, content: string): Configuration {
     name,
     target,
     on,
-    jobs,
+    jobs
   }
 }
 
@@ -215,7 +215,7 @@ export function getConfigIndex() {
       if (!index[dbID]) {
         index[dbID] = {
           on: new Set(config.on),
-          configs: [config],
+          configs: [config]
         }
       } else {
         index[dbID].configs.push(config)

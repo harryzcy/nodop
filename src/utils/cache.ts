@@ -23,7 +23,7 @@ interface Cache {
 const cacheDir = process.env.CACHE_DIR
 const cache: Cache = {
   running: false,
-  lastTimestamp: 0,
+  lastTimestamp: 0
 }
 
 async function loadCache(cacheDir?: string) {
@@ -51,7 +51,7 @@ async function saveCache() {
   const cacheData = JSON.stringify({
     pid: cache.running ? process.pid : undefined,
     running: cache.running,
-    lastTimestamp: cache.lastTimestamp,
+    lastTimestamp: cache.lastTimestamp
   })
   await fsPromises.writeFile(cachePath, cacheData, 'utf8')
 }
@@ -80,5 +80,5 @@ export default {
   getLastTimestamp,
   setLastTimestamp,
   startRun,
-  stopRun,
+  stopRun
 }

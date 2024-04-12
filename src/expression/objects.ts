@@ -1,9 +1,14 @@
-import { MultiSelectPropertyItemObjectResponse, PageObjectResponse, PropertyItemObjectResponse, TitlePropertyItemObjectResponse } from '@notionhq/client/build/src/api-endpoints.js'
+import {
+  MultiSelectPropertyItemObjectResponse,
+  PageObjectResponse,
+  PropertyItemObjectResponse,
+  TitlePropertyItemObjectResponse
+} from '@notionhq/client/build/src/api-endpoints.js'
 import { getPageProperty, setPageProperty } from '../notion/notion.js'
 
-export class CustomValue { }
+export class CustomValue {}
 
-export class NotionValue extends CustomValue { }
+export class NotionValue extends CustomValue {}
 
 export class PageValue extends NotionValue {
   type: 'page'
@@ -34,7 +39,10 @@ export class PropertyValue extends NotionValue {
   property_type: string
   property_value: PropertyItemObjectResponse | PropertyItemObjectResponse[]
 
-  constructor(id: string, property: PropertyItemObjectResponse | PropertyItemObjectResponse[]) {
+  constructor(
+    id: string,
+    property: PropertyItemObjectResponse | PropertyItemObjectResponse[]
+  ) {
     super()
     this.type = 'property'
     this.id = id
@@ -67,9 +75,11 @@ export class PropertyValue extends NotionValue {
 
   get_value(): string {
     if (Array.isArray(this.property_value)) {
-      return this.property_value.map((item) => {
-        return item[item.type]
-      }).join('')
+      return this.property_value
+        .map((item) => {
+          return item[item.type]
+        })
+        .join('')
     }
 
     if (this.is_empty()) return ''
@@ -80,15 +90,17 @@ export class PropertyValue extends NotionValue {
     if (this.is_empty()) return false
 
     if (this.property_type === 'multi_select') {
-      return (<MultiSelectPropertyItemObjectResponse>this.property_value).multi_select.some(
+      return (<MultiSelectPropertyItemObjectResponse>(
+        this.property_value
+      )).multi_select.some(
         (select: { id: string; name: string; color: string }) => {
           return select.name === value
-        },
+        }
       )
     }
 
     if (this.property_type === 'title') {
-      const fullTitle = (<TitlePropertyItemObjectResponse[]> this.property_value)
+      const fullTitle = (<TitlePropertyItemObjectResponse[]>this.property_value)
         .map((result: { title: { plain_text: string } }) => {
           return result.title.plain_text
         })
@@ -96,7 +108,7 @@ export class PropertyValue extends NotionValue {
       return fullTitle.includes(value)
     }
     throw new Error(
-      `contains is not implemented for property type ${this.property_type}`,
+      `contains is not implemented for property type ${this.property_type}`
     )
   }
 
@@ -161,9 +173,7 @@ export class TimeValue extends CustomValue {
   }
 
   is_same_month(other: TimeValue): boolean {
-    return (
-      this.year === other.year && this.month === other.month
-    )
+    return this.year === other.year && this.month === other.month
   }
 
   is_same_day(other: TimeValue): boolean {

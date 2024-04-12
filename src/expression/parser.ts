@@ -100,7 +100,7 @@ export class Parser {
         type: 'binary_expression',
         left: e,
         right: right,
-        operator: op.type(),
+        operator: op.type()
       }
     }
     return e
@@ -115,7 +115,7 @@ export class Parser {
         type: 'binary_expression',
         left: e,
         right: right,
-        operator: op.type(),
+        operator: op.type()
       }
     }
     return e
@@ -133,7 +133,7 @@ export class Parser {
         type: 'binary_expression',
         left: e,
         right: right,
-        operator: op.type(),
+        operator: op.type()
       }
     }
     return e
@@ -153,7 +153,7 @@ export class Parser {
         type: 'binary_expression',
         left: e,
         right: right,
-        operator: op.type(),
+        operator: op.type()
       }
     }
     return e
@@ -166,7 +166,7 @@ export class Parser {
       return {
         type: 'unary_expression',
         expr,
-        operator: op.type(),
+        operator: op.type()
       }
     } else {
       return this.parseMemberExpression()
@@ -181,7 +181,7 @@ export class Parser {
       expr = {
         type: 'member_expression',
         object: expr,
-        property,
+        property
       }
     }
     return expr
@@ -197,17 +197,17 @@ export class Parser {
       case TokenType.BOOLEAN:
         return {
           type: 'boolean',
-          value: this.takeIt().value() === 'true',
+          value: this.takeIt().value() === 'true'
         }
       case TokenType.NUM:
         return {
           type: 'number',
-          value: parseFloat(this.takeIt().value()),
+          value: parseFloat(this.takeIt().value())
         }
       case TokenType.STRING:
         return {
           type: 'string',
-          value: this.takeIt().value(),
+          value: this.takeIt().value()
         }
       // identifier
       case TokenType.IDENTIFIER:
@@ -221,12 +221,12 @@ export class Parser {
           return {
             type: 'call_expression',
             func: iden,
-            args,
+            args
           }
         } else {
           return {
             type: 'identifier',
-            value: iden,
+            value: iden
           }
         }
       // group expression
@@ -236,7 +236,7 @@ export class Parser {
         this.take(TokenType.RIGHT_PAREN)
         return {
           type: 'group_expression',
-          expr: expr,
+          expr: expr
         }
       default:
         throw new Error('Unknown token type')
@@ -266,7 +266,7 @@ export class Parser {
       throw new Error(
         `Expected ${TokenType[expected]}, but got ${
           TokenType[this.currentToken.type()]
-        }`,
+        }`
       )
     }
     return this.takeIt()

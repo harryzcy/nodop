@@ -23,8 +23,8 @@ describe('evaluate', () => {
     expect(
       await evaluate(
         null,
-        '123 == 123 && !false && (false || "foo" == \'foo\')',
-      ),
+        '123 == 123 && !false && (false || "foo" == \'foo\')'
+      )
     ).toBe(true)
   })
 
@@ -33,15 +33,15 @@ describe('evaluate', () => {
       await evaluate(
         null,
         `true 
-        && false`,
-      ),
+        && false`
+      )
     ).toBe(false)
     expect(
       await evaluate(
         null,
         `(true 
-        && false)`,
-      ),
+        && false)`
+      )
     ).toBe(false)
   })
 
@@ -79,9 +79,9 @@ describe('evaluate', () => {
               plain_text: 'example_title',
               annotations: null,
               text: null,
-              href: null,
-            },
-          },
+              href: null
+            }
+          }
         ]
       }
       if (propertyID == '2-select') {
@@ -89,7 +89,7 @@ describe('evaluate', () => {
           object: 'property_item',
           id: propertyID,
           type: 'select',
-          select: null,
+          select: null
         }
       }
       if (propertyID == '3-select') {
@@ -100,8 +100,8 @@ describe('evaluate', () => {
           select: {
             id: '64190ec9-e963-47cb-bc37-6a71d6b71206',
             name: 'Option 1',
-            color: 'orange',
-          },
+            color: 'orange'
+          }
         }
       }
       if (propertyID == '4-multi_select') {
@@ -113,14 +113,14 @@ describe('evaluate', () => {
             {
               id: '91e6959e-7690-4f55-b8dd-d3da9debac45',
               name: 'A',
-              color: 'orange',
+              color: 'orange'
             },
             {
               id: '2f998e2d-7b1c-485b-ba6b-5e6a815ec8f5',
               name: 'B',
-              color: 'purple',
-            },
-          ],
+              color: 'purple'
+            }
+          ]
         }
       }
 
@@ -133,31 +133,31 @@ describe('evaluate', () => {
         title: {
           type: 'title',
           title: [],
-          id: '1-title',
+          id: '1-title'
         },
         null_select: {
           type: 'select',
           select: null,
-          id: '2-select',
+          id: '2-select'
         },
         Status: {
           type: 'select',
           select: null,
-          id: '3-select',
+          id: '3-select'
         },
         multi_select: {
           type: 'multi_select',
           multi_select: [],
-          id: '4-multi_select',
-        },
+          id: '4-multi_select'
+        }
       },
       created_by: {
         id: 'foo',
-        object: 'user',
+        object: 'user'
       },
       last_edited_by: {
         id: 'foo',
-        object: 'user',
+        object: 'user'
       },
       object: 'page',
       id: '123',
@@ -168,61 +168,61 @@ describe('evaluate', () => {
       public_url: 'https://notion.so/example_title',
       icon: {
         type: 'emoji',
-        emoji: '😀',
+        emoji: '😀'
       },
       cover: {
         type: 'external',
         external: {
-          url: '',
-        },
+          url: ''
+        }
       },
-      in_trash: false,
+      in_trash: false
     }
 
     // is_empty
     expect(
-      await evaluate(page, 'page.get_property("null_select").is_empty()'),
+      await evaluate(page, 'page.get_property("null_select").is_empty()')
     ).toBe(true)
     // is_not_empty
     expect(
-      await evaluate(page, 'page.get_property("Status").is_not_empty()'),
+      await evaluate(page, 'page.get_property("Status").is_not_empty()')
     ).toBe(true)
 
     // is_type
     expect(
-      await evaluate(page, 'page.get_property("Status").is_type("select")'),
+      await evaluate(page, 'page.get_property("Status").is_type("select")')
     ).toBe(true)
     expect(
-      await evaluate(page, 'page.get_property("title").is_type("select")'),
+      await evaluate(page, 'page.get_property("title").is_type("select")')
     ).toBe(false)
 
     // get_value
     expect(
       await evaluate(
         page,
-        'page.get_property("Status").get_value().name == "Option 1"',
-      ),
+        'page.get_property("Status").get_value().name == "Option 1"'
+      )
     ).toBe(true)
 
     // contains
     expect(
-      await evaluate(page, 'page.get_property("title").contains("example")'),
+      await evaluate(page, 'page.get_property("title").contains("example")')
     ).toBe(true)
     expect(
-      await evaluate(page, 'page.get_property("multi_select").contains("A")'),
+      await evaluate(page, 'page.get_property("multi_select").contains("A")')
     ).toBe(true)
     expect(
-      await evaluate(page, 'page.get_property("multi_select").contains("B")'),
+      await evaluate(page, 'page.get_property("multi_select").contains("B")')
     ).toBe(true)
     expect(
-      await evaluate(page, 'page.get_property("multi_select").contains("C")'),
+      await evaluate(page, 'page.get_property("multi_select").contains("C")')
     ).toBe(false)
     // not_contains
     expect(
       await evaluate(
         page,
-        'page.get_property("multi_select").not_contains("A")',
-      ),
+        'page.get_property("multi_select").not_contains("A")'
+      )
     ).toBe(false)
   })
 })
