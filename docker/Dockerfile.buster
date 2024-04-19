@@ -1,4 +1,4 @@
-FROM node:20.12.2-buster as base
+FROM node:20.12.2-buster@sha256:d86147ea021b6503889e9ae72be13a3825004c2c0418e91491bcd160e5ce6be9 as base
 
 FROM base as builder
 
