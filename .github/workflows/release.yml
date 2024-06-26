@@ -38,7 +38,7 @@ jobs:
     name: Build Docker Image
     strategy:
       matrix:
-        base-image: [alpine3.18, bookworm, bullseye, buster]
+        base-image: [alpine3.20, bookworm, bullseye, buster]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
@@ -60,17 +60,17 @@ jobs:
               `${image_name}:${major}.${minor}.${patch}`,
             ]
             const tags = []
-            if (base_image === 'alpine3.18') {
+            if (base_image === 'alpine3.20') {
               tags.push(...version_tags.map(tag => `${tag}-alpine`))
-              tags.push(...version_tags.map(tag => `${tag}-alpine3.18`))
-              tags.push(`${image_name}:alpine`, `${image_name}:alpine3.18`)
+              tags.push(...version_tags.map(tag => `${tag}-alpine3.20`))
+              tags.push(`${image_name}:alpine`, `${image_name}:alpine3.20`)
               core.exportVariable('DOCKERFILE_NAME', 'docker/Dockerfile.alpine')
-            } else if (base_image === 'bullseye') {
+            } else if (base_image === 'bookworm') {
               tags.push(...version_tags.map(tag => `${tag}-${base_image}`))
               tags.push(...version_tags)
               tags.push(`${image_name}:${base_image}`, `${image_name}:latest`)
               core.exportVariable('DOCKERFILE_NAME', `docker/Dockerfile.${base_image}`)
-            } else if (base_image === 'buster') {
+            } else if (base_image === 'bullseye' || base_image === 'buster') {
               tags.push(...version_tags.map(tag => `${tag}-${base_image}`))
               tags.push(`${image_name}:${base_image}`)
               core.exportVariable('DOCKERFILE_NAME', `docker/Dockerfile.${base_image}`)
