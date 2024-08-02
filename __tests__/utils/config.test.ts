@@ -356,7 +356,7 @@ describe('loadConfig', () => {
   })
 
   it('error, no file', async () => {
-    const t = async () => await loadConfig('__tests__/testdata/not-exist')
+    const t = async () => { await loadConfig('__tests__/testdata/not-exist') }
     await expect(t).rejects.toThrow('Invalid configuration')
   })
 
@@ -364,7 +364,7 @@ describe('loadConfig', () => {
     const filename = '__tests__/testdata/symlink'
     await fs.promises.symlink('conf.yaml', filename)
 
-    const t = async () => await loadConfig(filename)
+    const t = async () => { await loadConfig(filename) }
     await expect(t).rejects.toThrow('Invalid configuration')
     await fs.promises.rm(filename)
   })

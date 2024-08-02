@@ -60,7 +60,7 @@ export class RateLimitedError extends Error {
 export async function getNewPagesFromDatabase(
   databaseId: string,
   events: Set<string> = null
-): Promise<Array<PageObjectResponse>> {
+): Promise<PageObjectResponse[]> {
   let filter = null
   if (eventsContainsOnly(events, 'create', 'update')) {
     filter = {
@@ -71,7 +71,7 @@ export async function getNewPagesFromDatabase(
     }
   }
 
-  let pages: Array<PartialPageObjectResponse | PartialDatabaseObjectResponse>
+  let pages: (PartialPageObjectResponse | PartialDatabaseObjectResponse)[]
   try {
     pages = await collectPaginatedAPI(notion.databases.query, {
       database_id: databaseId,
@@ -124,13 +124,11 @@ export async function getPageProperty(
 
   while (nextCursor !== null) {
     // assert PropertyItemListResponse type
-    const propertyItem = <PropertyItemListResponse>(
-      await notion.pages.properties.retrieve({
+    const propertyItem = await notion.pages.properties.retrieve({
         page_id: pageId,
         property_id: propertyId,
         start_cursor: nextCursor
-      })
-    )
+      }) as PropertyItemListResponse
 
     nextCursor = propertyItem.next_cursor
     results.push(...propertyItem.results)

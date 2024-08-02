@@ -90,9 +90,7 @@ export class PropertyValue extends NotionValue {
     if (this.is_empty()) return false
 
     if (this.property_type === 'multi_select') {
-      return (<MultiSelectPropertyItemObjectResponse>(
-        this.property_value
-      )).multi_select.some(
+      return (this.property_value as MultiSelectPropertyItemObjectResponse).multi_select.some(
         (select: { id: string; name: string; color: string }) => {
           return select.name === value
         }
@@ -100,7 +98,7 @@ export class PropertyValue extends NotionValue {
     }
 
     if (this.property_type === 'title') {
-      const fullTitle = (<TitlePropertyItemObjectResponse[]>this.property_value)
+      const fullTitle = (this.property_value as TitlePropertyItemObjectResponse[])
         .map((result: { title: { plain_text: string } }) => {
           return result.title.plain_text
         })

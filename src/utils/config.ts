@@ -6,8 +6,8 @@ const fsPromises = fs.promises
 export type JobId = string
 
 export interface ConfigYaml {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  name?: any
+   
+  name?: string
   target?: string[] | string
   on?: string[] | string
   jobs?: Record<
@@ -15,12 +15,12 @@ export interface ConfigYaml {
     {
       name?: string
       if?: string
-      steps?: Array<{
+      steps?: {
         name?: string
         if?: string
         lang?: string
         run?: string
-      }>
+      }[]
     }
   >
 }
@@ -49,7 +49,7 @@ export function validateConfig(src: ConfigYaml): {
   success: boolean
   errors: string
 } {
-  const errors = []
+  const errors: string[] = []
   if (src.name && typeof src.name !== 'string') {
     errors.push('name must be a string')
   }
@@ -78,17 +78,21 @@ export function validateConfig(src: ConfigYaml): {
         for (let stepIdx = 0; stepIdx < job.steps.length; stepIdx++) {
           const step = job.steps[stepIdx]
           if (step.if !== undefined && typeof step.if !== 'string') {
-            errors.push(`jobs.<job_id>.steps[${stepIdx}].if must be a string`)
+            errors.push(
+              `jobs.<job_id>.steps[${stepIdx.toString()}].if must be a string`
+            )
           }
           if (step.lang) {
             if (step.lang !== 'bash' && step.lang !== 'builtin') {
               errors.push(
-                `jobs.<job_id>.steps[${stepIdx}].lang must be either "bash" or "builtin"`
+                `jobs.<job_id>.steps[${stepIdx.toString()}].lang must be either "bash" or "builtin"`
               )
             }
           }
           if (typeof step.run !== 'string') {
-            errors.push(`jobs.<job_id>.steps[${stepIdx}].run must be a string`)
+            errors.push(
+              `jobs.<job_id>.steps[${stepIdx.toString()}].run must be a string`
+            )
           }
         }
       }
@@ -102,18 +106,18 @@ export function validateConfig(src: ConfigYaml): {
 }
 
 export function parseConfig(filename: string, content: string): Configuration {
-  const src: ConfigYaml = yaml.load(content)
+  const src: ConfigYaml = yaml.load(content) as ConfigYaml
   const { success, errors } = validateConfig(src)
   if (!success) {
     throw new Error(`Invalid config: ${errors}`)
   }
 
-  const name = src.name || filename
+  const name = src.name ?? filename
   const target: string[] = []
   if (typeof src.target === 'string') {
     target.push(src.target)
   } else {
-    target.push(...src.target)
+    target.push(...(src.target ?? ''))
   }
 
   const on: string[] = []
@@ -158,10 +162,10 @@ export function parseConfig(filename: string, content: string): Configuration {
 export async function readConfigFile(filePath: string): Promise<Configuration> {
   const filename = filePath.split('/').pop()
   const content = await fsPromises.readFile(filePath, 'utf8')
-  return parseConfig(filename, content)
+  return parseConfig(filename ?? '', content)
 }
 
-const configurations: Array<Configuration> = []
+const configurations: Configuration[] = []
 
 /**
  * Load all config files from the given path.

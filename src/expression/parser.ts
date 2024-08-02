@@ -25,31 +25,31 @@ export type Expression =
   | Identifier
   | Literal
 
-export type CallExpression = {
+export interface CallExpression {
   type: 'call_expression'
   func: string
   args: Expression[]
 }
 
-export type MemberExpression = {
+export interface MemberExpression {
   type: 'member_expression'
   object: Expression
   property: Expression
 }
 
-export type GroupExpression = {
+export interface GroupExpression {
   type: 'group_expression'
   expr: Expression
 }
 
-export type BinaryExpression = {
+export interface BinaryExpression {
   type: 'binary_expression'
   left: Expression
   right: Expression
   operator: TokenType // &&, ||
 }
 
-export type UnaryExpression = {
+export interface UnaryExpression {
   type: 'unary_expression'
   operator: TokenType // !
   expr: Expression
@@ -69,7 +69,7 @@ export type Literal =
       value: number
     }
 
-export type Identifier = {
+export interface Identifier {
   type: 'identifier'
   value: string
 }
