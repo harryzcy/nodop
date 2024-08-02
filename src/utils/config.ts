@@ -188,7 +188,7 @@ export async function loadConfig(path: string) {
       throw new Error('Invalid config path')
     }
   } catch (e) {
-    throw new Error('Invalid configuration')
+    throw new Error('Invalid configuration: ' + e)
   }
 
   configurations.splice(0, configurations.length) // clear

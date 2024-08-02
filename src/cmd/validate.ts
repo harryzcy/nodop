@@ -5,6 +5,7 @@ const configPath = process.env.CONFIG_PATH || 'nodop'
 
 try {
   await loadConfig(configPath)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
 } catch (error) {
   console.error('Invalid configuration')
   process.exit(1)
