@@ -3,7 +3,7 @@ import { Scanner, Token, TokenType } from '../../src/expression/scanner'
 function getAllTokens(s: string): Token[] {
   const scanner = new Scanner(s)
   const tokens: Token[] = []
-  // eslint-disable-next-line no-constant-condition
+   
   while (true) {
     const token = scanner.scan()
     if (token.type() === TokenType.EOT) {
