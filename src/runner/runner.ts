@@ -30,7 +30,7 @@ export async function runNonStop(index: ConfigurationIndex) {
   while (!shouldStop) {
     if (counter % CHECK_INTERVAL === 0) {
       const wait = await runOnce(index)
-      counter == 0
+      counter = 0
 
       if (wait > 0) {
         // rate limited, wait for Retry-After seconds

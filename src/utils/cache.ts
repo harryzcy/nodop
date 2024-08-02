@@ -10,6 +10,7 @@ export async function isDirectory(dir?: string): Promise<boolean> {
   try {
     const stats = await fsPromises.stat(dir)
     return stats.isDirectory()
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return false
   }
@@ -38,6 +39,7 @@ async function loadCache(cacheDir?: string) {
 
     cache.running = cacheObj.running
     cache.lastTimestamp = cacheObj.lastTimestamp
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     // ignore
   }
