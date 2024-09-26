@@ -98,7 +98,7 @@ describe('validateConfig', () => {
 
   it('invalid config, non string name', () => {
     const config: ConfigYaml = {
-      name: 1,
+      name: '1',
       target: ['databaseId1', 'databaseId2'],
       on: 'create',
       jobs: { job1: { if: 'if1', steps: [{ run: 'command1' }] } }
@@ -356,7 +356,9 @@ describe('loadConfig', () => {
   })
 
   it('error, no file', async () => {
-    const t = async () => { await loadConfig('__tests__/testdata/not-exist') }
+    const t = async () => {
+      await loadConfig('__tests__/testdata/not-exist')
+    }
     await expect(t).rejects.toThrow('Invalid configuration')
   })
 
@@ -364,7 +366,9 @@ describe('loadConfig', () => {
     const filename = '__tests__/testdata/symlink'
     await fs.promises.symlink('conf.yaml', filename)
 
-    const t = async () => { await loadConfig(filename) }
+    const t = async () => {
+      await loadConfig(filename)
+    }
     await expect(t).rejects.toThrow('Invalid configuration')
     await fs.promises.rm(filename)
   })
