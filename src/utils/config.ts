@@ -6,7 +6,6 @@ const fsPromises = fs.promises
 export type JobId = string
 
 export interface ConfigYaml {
-   
   name?: string
   target?: string[] | string
   on?: string[] | string
@@ -172,7 +171,7 @@ const configurations: Configuration[] = []
  * @param path The path to the config file or directory
  */
 export async function loadConfig(path: string) {
-  const newConfigs = []
+  const newConfigs: Configuration[] = []
 
   try {
     const stats = await fsPromises.lstat(path)

@@ -29,7 +29,7 @@ export class PageValue extends NotionValue {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async set_property(name: string, value: any): Promise<void> {
     await setPageProperty(this.value.id, name, value)
-    return null
+    return
   }
 }
 
@@ -90,7 +90,9 @@ export class PropertyValue extends NotionValue {
     if (this.is_empty()) return false
 
     if (this.property_type === 'multi_select') {
-      return (this.property_value as MultiSelectPropertyItemObjectResponse).multi_select.some(
+      return (
+        this.property_value as MultiSelectPropertyItemObjectResponse
+      ).multi_select.some(
         (select: { id: string; name: string; color: string }) => {
           return select.name === value
         }
@@ -98,7 +100,9 @@ export class PropertyValue extends NotionValue {
     }
 
     if (this.property_type === 'title') {
-      const fullTitle = (this.property_value as TitlePropertyItemObjectResponse[])
+      const fullTitle = (
+        this.property_value as TitlePropertyItemObjectResponse[]
+      )
         .map((result: { title: { plain_text: string } }) => {
           return result.title.plain_text
         })

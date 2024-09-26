@@ -16,8 +16,8 @@ import * as notionCache from './cache.js'
 
 export const notion = new Client({ auth: process.env.NOTION_KEY })
 
-export function eventsContainsOnly(events: Set<string>, ...types: string[]) {
-  if (events === null) {
+export function eventsContainsOnly(events?: Set<string>, ...types: string[]) {
+  if (events === undefined) {
     return true
   }
   let hasOthers = false
@@ -57,12 +57,14 @@ export class RateLimitedError extends Error {
   }
 }
 
+type QueryDatabaseBodyParameters = Parameters<typeof notion.databases.query>[0]
+
 export async function getNewPagesFromDatabase(
   databaseId: string,
-  events: Set<string> = null
+  events?: Set<string>
 ): Promise<PageObjectResponse[]> {
-  let filter = null
-  if (eventsContainsOnly(events, 'create', 'update')) {
+  let filter: QueryDatabaseBodyParameters['filter']
+  if (events && eventsContainsOnly(events, 'create', 'update')) {
     filter = {
       timestamp: 'last_edited_time',
       last_edited_time: {
@@ -78,10 +80,11 @@ export async function getNewPagesFromDatabase(
       filter
     })
   } catch (error) {
-    if (error.code === APIErrorCode.RateLimited) {
+    const err = error as { code: APIErrorCode; headers: Record<string, string> }
+    if (err.code === APIErrorCode.RateLimited) {
       // rate limited, raise error
       // returning pages so far doesn't make sense because any subsequent API calls will fail
-      const retryAfter = Number(error.headers['Retry-After'])
+      const retryAfter = Number(err.headers['Retry-After'])
       throw new RateLimitedError(retryAfter)
     }
     throw error
@@ -124,11 +127,11 @@ export async function getPageProperty(
 
   while (nextCursor !== null) {
     // assert PropertyItemListResponse type
-    const propertyItem = await notion.pages.properties.retrieve({
-        page_id: pageId,
-        property_id: propertyId,
-        start_cursor: nextCursor
-      }) as PropertyItemListResponse
+    const propertyItem = (await notion.pages.properties.retrieve({
+      page_id: pageId,
+      property_id: propertyId,
+      start_cursor: nextCursor
+    })) as PropertyItemListResponse
 
     nextCursor = propertyItem.next_cursor
     results.push(...propertyItem.results)
@@ -140,8 +143,7 @@ export async function getPageProperty(
 export async function setPageProperty(
   pageId: string,
   propertyName: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  value: any
+  value: string
 ) {
   const page = await notion.pages.update({
     page_id: pageId,
