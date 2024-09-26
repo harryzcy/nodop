@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-      - uses: volta-cli/action@2d68418f32546fd191eb666e232b321d5726484d # v4.1.1
+      - uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0
+      - uses: volta-cli/action@5c175f92dea6f48441c436471e6479dbc192e194 # v4.2.1
       - run: npm ci --no-audit
       - run: npm run lint --if-present
       - run: npm test
