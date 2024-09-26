@@ -29,6 +29,7 @@ export function putPage(page: PageObjectResponse) {
 export function cleanupPages() {
   for (const pageId in cachedPages) {
     if (cachedPages[pageId].ttl === 0) {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete cachedPages[pageId]
     } else {
       cachedPages[pageId].ttl -= 1
