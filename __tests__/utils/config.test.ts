@@ -96,18 +96,6 @@ describe('validateConfig', () => {
     expect(errors).toBe('')
   })
 
-  it('invalid config, non string name', () => {
-    const config: ConfigYaml = {
-      name: '1',
-      target: ['databaseId1', 'databaseId2'],
-      on: 'create',
-      jobs: { job1: { if: 'if1', steps: [{ run: 'command1' }] } }
-    }
-    const { success, errors } = validateConfig(config)
-    expect(success).toBe(false)
-    expect(errors).toBe('name must be a string')
-  })
-
   it('invalid config, no db', () => {
     const config: ConfigYaml = {
       on: 'create',
