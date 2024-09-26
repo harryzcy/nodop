@@ -77,8 +77,18 @@ describe('evaluate', () => {
             title: {
               type: 'text',
               plain_text: 'example_title',
-              annotations: null,
-              text: null,
+              annotations: {
+                bold: false,
+                italic: false,
+                strikethrough: false,
+                underline: false,
+                code: false,
+                color: 'default'
+              },
+              text: {
+                content: '',
+                link: null
+              },
               href: null
             }
           }
