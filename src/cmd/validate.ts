@@ -1,7 +1,7 @@
 import { validate } from '../expression/validate.js'
 import { getConfigIndex, loadConfig } from '../utils/config.js'
 
-const configPath = process.env.CONFIG_PATH || 'nodop'
+const configPath = process.env.CONFIG_PATH ?? 'nodop'
 
 try {
   await loadConfig(configPath)
@@ -32,6 +32,7 @@ Object.entries(index).forEach(([, value]) => {
   })
 })
 
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 if (containsError) {
   process.exit(1)
 }

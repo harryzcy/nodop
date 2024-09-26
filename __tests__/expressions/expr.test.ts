@@ -67,6 +67,7 @@ describe('evaluate', () => {
   })
 
   it('actual page', async () => {
+    // eslint-disable-next-line @typescript-eslint/require-await
     mockedNotion.getPageProperty.mockImplementation(async (_, propertyID) => {
       if (propertyID == '1-title') {
         return [
@@ -77,8 +78,18 @@ describe('evaluate', () => {
             title: {
               type: 'text',
               plain_text: 'example_title',
-              annotations: null,
-              text: null,
+              annotations: {
+                bold: false,
+                italic: false,
+                strikethrough: false,
+                underline: false,
+                code: false,
+                color: 'default'
+              },
+              text: {
+                content: '',
+                link: null
+              },
               href: null
             }
           }

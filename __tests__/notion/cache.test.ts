@@ -12,7 +12,7 @@ const page: PageObjectResponse = {
     type: 'database_id',
     database_id: ''
   },
-  properties: undefined,
+  properties: {},
   icon: {
     type: 'emoji',
     emoji: '😀'

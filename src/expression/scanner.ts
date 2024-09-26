@@ -100,7 +100,7 @@ export class Scanner {
   }
 
   isEOT(): boolean {
-    return this.currentChar === null
+    return this.currentChar === 'EOT'
   }
 
   isWhitespace(): boolean {
@@ -276,7 +276,7 @@ export class Scanner {
   advance(): string {
     this.pos += 1
     if (this.pos >= this.source.length) {
-      this.currentChar = null
+      this.currentChar = 'EOT'
     } else {
       this.currentChar = this.source[this.pos]
     }

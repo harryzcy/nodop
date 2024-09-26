@@ -28,6 +28,7 @@ const cache: Cache = {
 }
 
 async function loadCache(cacheDir?: string) {
+  if (!cacheDir) return
   if (!(await isDirectory(cacheDir))) {
     return
   }
@@ -35,7 +36,7 @@ async function loadCache(cacheDir?: string) {
   try {
     const cachePath = path.join(cacheDir, 'cache.json')
     const cacheData = await fsPromises.readFile(cachePath, 'utf8')
-    const cacheObj = JSON.parse(cacheData)
+    const cacheObj = JSON.parse(cacheData) as Cache
 
     cache.running = cacheObj.running
     cache.lastTimestamp = cacheObj.lastTimestamp
@@ -46,6 +47,7 @@ async function loadCache(cacheDir?: string) {
 }
 
 async function saveCache() {
+  if (!cacheDir) return
   if (!(await isDirectory(cacheDir))) {
     return
   }

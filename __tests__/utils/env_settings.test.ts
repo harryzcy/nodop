@@ -6,8 +6,8 @@ describe('getIntFromEnv', () => {
   })
 
   it('should return the value', () => {
-    process.env['__TEST__'] = '3'
+    process.env.__TEST__ = '3'
     expect(getIntFromEnv('__TEST__', 3)).toBe(3)
-    process.env['__TEST__'] = undefined
+    process.env.__TEST__ = undefined
   })
 })

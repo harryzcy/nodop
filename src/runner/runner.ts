@@ -7,7 +7,8 @@ import { evaluate } from '../expression/expr.js'
 import { getIntFromEnv } from '../utils/env_setting.js'
 import { getLogger } from '../utils/logger.js'
 import * as notionCache from '../notion/cache.js'
-import { ClientErrorCode } from '@notionhq/client'
+import { RequestTimeoutError } from '@notionhq/client'
+import { isHTTPResponseError } from '@notionhq/client/build/src/errors.js'
 
 // exec is a function that executes a bash command
 const exec = util.promisify(child_process.exec)
@@ -97,14 +98,15 @@ async function runWorkflowForDB(
     if (error instanceof RateLimitedError) {
       return error.getRetryAfter()
     }
-    if (error.code == ClientErrorCode.RequestTimeout) {
+    if (RequestTimeoutError.isRequestTimeoutError(error)) {
       getLogger().warn('request-timeout', { databaseId, error })
       return CHECK_INTERVAL
     }
-    if (error.name == 'FetchError') {
+    if (isHTTPResponseError(error)) {
       getLogger().warn('fetch-error', { databaseId, error })
       return CHECK_INTERVAL
     }
+
     throw error
   }
   return 0

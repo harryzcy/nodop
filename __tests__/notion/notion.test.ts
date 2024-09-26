@@ -23,6 +23,6 @@ describe('eventsContainsOnly', () => {
   })
 
   it('returns true if events is empty', () => {
-    expect(eventsContainsOnly(null, 'create', 'update')).toBe(true)
+    expect(eventsContainsOnly(undefined, 'create', 'update')).toBe(true)
   })
 })
