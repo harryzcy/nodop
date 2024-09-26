@@ -16,8 +16,11 @@ import * as notionCache from './cache.js'
 
 export const notion = new Client({ auth: process.env.NOTION_KEY })
 
-export function eventsContainsOnly(events?: Set<string>, ...types: string[]) {
-  if (events === undefined) {
+export function eventsContainsOnly(
+  events?: Set<string> | null,
+  ...types: string[]
+) {
+  if (events === null || events === undefined) {
     return true
   }
   let hasOthers = false
