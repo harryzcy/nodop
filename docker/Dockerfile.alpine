@@ -1,4 +1,4 @@
-FROM node:23.0.0-alpine3.20@sha256:b20f8fad528b0e768936cb88ccb7b0e37cf41587d177e2d6fcdbd48bb4e083ec as base
+FROM node:23.1.0-alpine3.20@sha256:2834ff394a84d636118157e55e4fce8afff9260380357901f758d335df1f0b90 as base
 
 FROM base as builder
 
