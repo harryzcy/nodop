@@ -32,17 +32,14 @@ async function evalExpression(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
   if (e.type === 'call_expression') {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return await evalCallExpression(page, e)
   }
 
   if (e.type === 'member_expression') {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return await evalMemberExpression(page, e)
   }
 
   if (e.type === 'group_expression') {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return await evalExpression(page, e.expr)
   }
 
@@ -55,7 +52,6 @@ async function evalExpression(
   }
 
   if (e.type === 'identifier') {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return evalIdentifier(page, e)
   }
 
@@ -121,7 +117,7 @@ async function evalMemberExpression(
   let value = await evalExpression(page, e.object)
   if (typeof value === 'object') {
     if (e.property.type === 'string') {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       return value[e.property.value]
     }
 
@@ -132,7 +128,7 @@ async function evalMemberExpression(
         )
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       return value[e.property.value]
     }
 
@@ -152,11 +148,11 @@ async function evalMemberExpression(
 
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (value[e.property.func] instanceof AsyncFunction) {
-        // eslint-disable-next-line @typescript-eslint/return-await, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
         return await value[e.property.func](...args)
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       return value[e.property.func](...args)
     }
 

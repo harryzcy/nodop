@@ -111,8 +111,8 @@ export function parseConfig(filename: string, content: string): Configuration {
   const target: string[] = []
   if (typeof src.target === 'string') {
     target.push(src.target)
-  } else {
-    target.push(...(src.target ?? ''))
+  } else if (Array.isArray(src.target)) {
+    target.push(...src.target)
   }
 
   const on: string[] = []
