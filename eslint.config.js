@@ -5,7 +5,14 @@ import tseslint from 'typescript-eslint'
 
 export default tseslint.config(
   {
-    ignores: ['build/', '*.config.js', '*.config.ts', 'dist/', 'node_modules/']
+    ignores: [
+      'build/',
+      '*.config.js',
+      '*.config.ts',
+      'dist/',
+      'node_modules/',
+      '*.yml'
+    ]
   },
   eslint.configs.recommended,
   ...tseslint.configs.strictTypeChecked,
