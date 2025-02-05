@@ -1,4 +1,4 @@
-FROM node:23.7.0-bullseye@sha256:a82b48b7cc839797c44cc4af854fbefff8f93e997fdb8382941a821d15c5cbd2 as base
+FROM node:23.7.0-bullseye@sha256:3555d9352016a6052b22b776afd63cd1d37d988b393a9843dd6239d07f2810c5 as base
 
 FROM base as builder
 
