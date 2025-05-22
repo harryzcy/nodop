@@ -1,4 +1,4 @@
-FROM node:24.0.2-bookworm@sha256:15464c16b5e07fc77351e3b47327396597ab900c134bd75f0819d2d9caa58933 as base
+FROM node:24.0.2-bookworm@sha256:9f6555d5e2e9de61c250dbe3273ca86207ad17c9383eb102f1b867cc4f231cc1 as base
 
 FROM base as builder
 
