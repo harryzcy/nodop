@@ -23,8 +23,8 @@ RUN npm ci --omit=dev --no-audit
 
 COPY --from=builder --chown=appuser:appgroup /app/build ./build
 
-ENV CONFIG_PATH=/app/conf
-ENV CACHE_DIR=/app/cache
+ENV CONFIG_PATH=/app/conf \
+  CACHE_DIR=/app/cache
 
 HEALTHCHECK NONE
 
