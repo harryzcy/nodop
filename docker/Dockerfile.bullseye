@@ -1,6 +1,6 @@
-FROM node:24.2.0-bullseye@sha256:45bf4486f6da5189387934bc21de701211a3ff46b9dd649126a7c12073f734ac as base
+FROM node:24.2.0-bullseye@sha256:45bf4486f6da5189387934bc21de701211a3ff46b9dd649126a7c12073f734ac AS base
 
-FROM base as builder
+FROM base AS builder
 
 WORKDIR /app
 
@@ -23,8 +23,8 @@ RUN npm ci --omit=dev --no-audit
 
 COPY --from=builder --chown=appuser:appgroup /app/build ./build
 
-ENV CONFIG_PATH /app/conf
-ENV CACHE_DIR /app/cache
+ENV CONFIG_PATH=/app/conf
+ENV CACHE_DIR=/app/cache
 
 HEALTHCHECK NONE
 

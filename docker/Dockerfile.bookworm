@@ -1,6 +1,6 @@
-FROM node:24.2.0-bookworm@sha256:d1db2ecd11f417ab2ff4fef891b4d27194c367d101f9b9cd546a26e424e93d31 as base
+FROM node:24.2.0-bookworm@sha256:d1db2ecd11f417ab2ff4fef891b4d27194c367d101f9b9cd546a26e424e93d31 AS base
 
-FROM base as builder
+FROM base AS builder
 
 WORKDIR /app
 
@@ -23,8 +23,8 @@ RUN npm ci --omit=dev --no-audit
 
 COPY --from=builder --chown=appuser:appgroup /app/build ./build
 
-ENV CONFIG_PATH /app/conf
-ENV CACHE_DIR /app/cache
+ENV CONFIG_PATH=/app/conf
+ENV CACHE_DIR=/app/cache
 
 HEALTHCHECK NONE
 
