@@ -38,7 +38,7 @@ jobs:
     name: Build Docker Image
     strategy:
       matrix:
-        base-image: [alpine3.20, bookworm, bullseye, buster]
+        base-image: [alpine3.22, bookworm, bullseye, buster]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -60,10 +60,10 @@ jobs:
               `${image_name}:${major}.${minor}.${patch}`,
             ]
             const tags = []
-            if (base_image === 'alpine3.20') {
+            if (base_image === 'alpine3.22') {
               tags.push(...version_tags.map(tag => `${tag}-alpine`))
-              tags.push(...version_tags.map(tag => `${tag}-alpine3.20`))
-              tags.push(`${image_name}:alpine`, `${image_name}:alpine3.20`)
+              tags.push(...version_tags.map(tag => `${tag}-alpine3.22`))
+              tags.push(`${image_name}:alpine`, `${image_name}:alpine3.22`)
               core.exportVariable('DOCKERFILE_NAME', 'docker/Dockerfile.alpine')
             } else if (base_image === 'bookworm') {
               tags.push(...version_tags.map(tag => `${tag}-${base_image}`))
