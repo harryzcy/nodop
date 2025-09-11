@@ -1,6 +1,6 @@
-import { loadConfig, getConfigIndex } from './utils/config.js'
-import { runOnce, runNonStop } from './runner/runner.js'
-import cache from './utils/cache.js'
+import { loadConfig, getConfigIndex } from './utils/config'
+import { runOnce, runNonStop } from './runner/runner'
+import cache from './utils/cache'
 
 const configPath = process.env.CONFIG_PATH ?? 'nodop'
 
