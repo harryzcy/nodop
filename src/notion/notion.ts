@@ -5,8 +5,9 @@ import {
   collectPaginatedAPI
 } from '@notionhq/client'
 import {
+  DataSourceObjectResponse,
   PageObjectResponse,
-  PartialDatabaseObjectResponse,
+  PartialDataSourceObjectResponse,
   PartialPageObjectResponse,
   PropertyItemListResponse,
   PropertyItemObjectResponse
@@ -60,13 +61,15 @@ export class RateLimitedError extends Error {
   }
 }
 
-type QueryDatabaseBodyParameters = Parameters<typeof notion.databases.query>[0]
+type QueryDataSourceBodyParameters = Parameters<
+  typeof notion.dataSources.query
+>[0]
 
-export async function getNewPagesFromDatabase(
-  databaseId: string,
+export async function getNewPagesFromDataSource(
+  dataSourceId: string,
   events?: Set<string>
 ): Promise<PageObjectResponse[]> {
-  let filter: QueryDatabaseBodyParameters['filter']
+  let filter: QueryDataSourceBodyParameters['filter']
   if (events && eventsContainsOnly(events, 'create', 'update')) {
     filter = {
       timestamp: 'last_edited_time',
@@ -76,10 +79,15 @@ export async function getNewPagesFromDatabase(
     }
   }
 
-  let pages: (PartialPageObjectResponse | PartialDatabaseObjectResponse)[]
+  let pages: (
+    | PartialPageObjectResponse
+    | PageObjectResponse
+    | PartialDataSourceObjectResponse
+    | DataSourceObjectResponse
+  )[]
   try {
-    pages = await collectPaginatedAPI(notion.databases.query, {
-      database_id: databaseId,
+    pages = await collectPaginatedAPI(notion.dataSources.query, {
+      data_source_id: dataSourceId,
       filter
     })
   } catch (error) {

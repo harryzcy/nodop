@@ -1,7 +1,7 @@
-name: TODO Database
+name: TODO Data Source
 
 target:
-  - <32-digit-database-id>
+  - <32-digit-data-source-id>
 
 on: [create, update]
 

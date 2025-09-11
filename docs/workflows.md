@@ -1,6 +1,6 @@
 # Workflows
 
-Workflows is a set of YAML files, each consisting one or multiple rules that operate on Notion databases. A workflow file ends with a `.yaml` or `.yml` extension.
+Workflows is a set of YAML files, each consisting one or multiple rules that operate on Notion data sources. A workflow file ends with a `.yaml` or `.yml` extension.
 
 ## Syntax
 
@@ -30,25 +30,25 @@ Currently, only `create` and `update` events are supported.
 
 ### `target`
 
-The databases IDs that this workflow targets. Each ID used by Notion is an 32-digit hex number.
+The data sources IDs that this workflow targets. Each ID used by Notion is an 32-digit hex number.
 
-It may be one database:
+It may be one data source:
 
 ```yaml
-target: <database_id>
+target: <data_source_id>
 ```
 
-or multiple databases:
+or multiple data sources:
 
 ```yaml
 target:
-  - <database_id_1>
-  - <database_id_2>
+  - <data_source_id_1>
+  - <data_source_id_2>
 ```
 
 ### `jobs`
 
-The actual actions that should run on pages inside of targeted databases.
+The actual actions that should run on pages inside of targeted data sources.
 
 ### `jobs.<job_id>`
 

@@ -203,9 +203,9 @@ export function getAllConfigs() {
   return configurations
 }
 
-export type DatabaseID = string
+export type DataSourceID = string
 export type ConfigurationIndex = Record<
-  DatabaseID,
+  DataSourceID,
   {
     on: Set<string>
     configs: Configuration[]

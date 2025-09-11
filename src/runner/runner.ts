@@ -1,7 +1,10 @@
 import util from 'util'
 import child_process from 'child_process'
 import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints.js'
-import { getNewPagesFromDatabase, RateLimitedError } from '../notion/notion.js'
+import {
+  getNewPagesFromDataSource,
+  RateLimitedError
+} from '../notion/notion.js'
 import { Configuration, ConfigurationIndex, Job } from '../utils/config.js'
 import { evaluate } from '../expression/expr.js'
 import { getIntFromEnv } from '../utils/env_setting.js'
@@ -63,8 +66,8 @@ export async function runOnce(index: ConfigurationIndex): Promise<number> {
  * @returns The number of seconds to wait before running the next time
  */
 export async function runWorkflow(index: ConfigurationIndex): Promise<number> {
-  for (const [databaseId, value] of Object.entries(index)) {
-    const wait = await runWorkflowForDB(databaseId, value.on, value.configs)
+  for (const [dataSourceId, value] of Object.entries(index)) {
+    const wait = await runWorkflowForDB(dataSourceId, value.on, value.configs)
     if (wait > 0) return wait
   }
 
@@ -73,19 +76,19 @@ export async function runWorkflow(index: ConfigurationIndex): Promise<number> {
 }
 
 /**
- * Runs the workflow for the given database.
- * @param databaseId The database ID
+ * Runs the workflow for the given data source.
+ * @param dataSourceId The data source ID
  * @param on The event to run the workflow on
  * @param configs The configurations to run
  * @returns The number of seconds to wait before running the next time
  */
 async function runWorkflowForDB(
-  databaseId: string,
+  dataSourceId: string,
   on: Set<string>,
   configs: Configuration[]
 ): Promise<number> {
   try {
-    const pages = await getNewPagesFromDatabase(databaseId, on)
+    const pages = await getNewPagesFromDataSource(dataSourceId, on)
 
     for (const config of configs) {
       for (const job of Object.values(config.jobs)) {
@@ -99,11 +102,11 @@ async function runWorkflowForDB(
       return error.getRetryAfter()
     }
     if (RequestTimeoutError.isRequestTimeoutError(error)) {
-      getLogger().warn('request-timeout', { databaseId, error })
+      getLogger().warn('request-timeout', { dataSourceId, error })
       return CHECK_INTERVAL
     }
     if (isHTTPResponseError(error)) {
-      getLogger().warn('fetch-error', { databaseId, error })
+      getLogger().warn('fetch-error', { dataSourceId, error })
       return CHECK_INTERVAL
     }
 
