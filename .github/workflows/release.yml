@@ -38,7 +38,7 @@ jobs:
     name: Build Docker Image
     strategy:
       matrix:
-        base-image: [alpine3.22, bookworm, bullseye, buster]
+        base-image: [alpine3.22, trixie, bookworm]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
@@ -65,12 +65,12 @@ jobs:
               tags.push(...version_tags.map(tag => `${tag}-alpine3.22`))
               tags.push(`${image_name}:alpine`, `${image_name}:alpine3.22`)
               core.exportVariable('DOCKERFILE_NAME', 'docker/Dockerfile.alpine')
-            } else if (base_image === 'bookworm') {
+            } else if (base_image === 'trixie') {
               tags.push(...version_tags.map(tag => `${tag}-${base_image}`))
               tags.push(...version_tags)
               tags.push(`${image_name}:${base_image}`, `${image_name}:latest`)
               core.exportVariable('DOCKERFILE_NAME', `docker/Dockerfile.${base_image}`)
-            } else if (base_image === 'bullseye' || base_image === 'buster') {
+            } else if (base_image === 'bookwrom') {
               tags.push(...version_tags.map(tag => `${tag}-${base_image}`))
               tags.push(`${image_name}:${base_image}`)
               core.exportVariable('DOCKERFILE_NAME', `docker/Dockerfile.${base_image}`)
