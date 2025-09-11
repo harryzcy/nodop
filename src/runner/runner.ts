@@ -66,8 +66,8 @@ export async function runOnce(index: ConfigurationIndex): Promise<number> {
  * @returns The number of seconds to wait before running the next time
  */
 export async function runWorkflow(index: ConfigurationIndex): Promise<number> {
-  for (const [databaseId, value] of Object.entries(index)) {
-    const wait = await runWorkflowForDB(databaseId, value.on, value.configs)
+  for (const [dataSourceId, value] of Object.entries(index)) {
+    const wait = await runWorkflowForDB(dataSourceId, value.on, value.configs)
     if (wait > 0) return wait
   }
 
