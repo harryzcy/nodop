@@ -1,17 +1,14 @@
 import util from 'util'
 import child_process from 'child_process'
-import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints.js'
-import {
-  getNewPagesFromDataSource,
-  RateLimitedError
-} from '../notion/notion.js'
-import { Configuration, ConfigurationIndex, Job } from '../utils/config.js'
-import { evaluate } from '../expression/expr.js'
-import { getIntFromEnv } from '../utils/env_setting.js'
-import { getLogger } from '../utils/logger.js'
-import * as notionCache from '../notion/cache.js'
+import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints'
+import { getNewPagesFromDataSource, RateLimitedError } from '../notion/notion'
+import { Configuration, ConfigurationIndex, Job } from '../utils/config'
+import { evaluate } from '../expression/expr'
+import { getIntFromEnv } from '../utils/env_setting'
+import { getLogger } from '../utils/logger'
+import * as notionCache from '../notion/cache'
 import { RequestTimeoutError } from '@notionhq/client'
-import { isHTTPResponseError } from '@notionhq/client/build/src/errors.js'
+import { isHTTPResponseError } from '@notionhq/client/build/src/errors'
 
 // exec is a function that executes a bash command
 const exec = util.promisify(child_process.exec)

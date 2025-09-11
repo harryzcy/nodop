@@ -1,4 +1,4 @@
-import { Parser } from './parser.js'
+import { Parser } from './parser'
 
 export function validate(s: string): boolean {
   const parser = new Parser(s)

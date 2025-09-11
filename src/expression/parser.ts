@@ -14,7 +14,7 @@
  * String ::= ".*"
  */
 
-import { Scanner, Token, TokenType } from './scanner.js'
+import { Scanner, Token, TokenType } from './scanner'
 
 export type Expression =
   | CallExpression

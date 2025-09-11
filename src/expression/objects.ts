@@ -3,8 +3,8 @@ import {
   PageObjectResponse,
   PropertyItemObjectResponse,
   TitlePropertyItemObjectResponse
-} from '@notionhq/client/build/src/api-endpoints.js'
-import { getPageProperty, setPageProperty } from '../notion/notion.js'
+} from '@notionhq/client/build/src/api-endpoints'
+import { getPageProperty, setPageProperty } from '../notion/notion'
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class CustomValue {}

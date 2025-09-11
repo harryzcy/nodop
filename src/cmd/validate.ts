@@ -1,5 +1,5 @@
-import { validate } from '../expression/validate.js'
-import { getConfigIndex, loadConfig } from '../utils/config.js'
+import { validate } from '../expression/validate'
+import { getConfigIndex, loadConfig } from '../utils/config'
 
 const configPath = process.env.CONFIG_PATH ?? 'nodop'
 

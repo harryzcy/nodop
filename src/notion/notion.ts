@@ -11,9 +11,9 @@ import {
   PartialPageObjectResponse,
   PropertyItemListResponse,
   PropertyItemObjectResponse
-} from '@notionhq/client/build/src/api-endpoints.js'
-import cache from '../utils/cache.js'
-import * as notionCache from './cache.js'
+} from '@notionhq/client/build/src/api-endpoints'
+import cache from '../utils/cache'
+import * as notionCache from './cache'
 
 export const notion = new Client({ auth: process.env.NOTION_KEY })
 
