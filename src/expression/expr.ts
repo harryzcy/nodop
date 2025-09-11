@@ -1,4 +1,4 @@
-import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints.js'
+import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints'
 import {
   CallExpression,
   MemberExpression,
@@ -7,15 +7,15 @@ import {
   Expression,
   Parser,
   Identifier
-} from './parser.js'
-import { TokenType } from './scanner.js'
+} from './parser'
+import { TokenType } from './scanner'
 import {
   CustomValue,
   NotionValue,
   ObjectValue,
   PageValue,
   TimeValue
-} from './objects.js'
+} from './objects'
 
 export async function evaluate(
   page: PageObjectResponse | null,
