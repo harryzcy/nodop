@@ -70,7 +70,7 @@ jobs:
               tags.push(...version_tags)
               tags.push(`${image_name}:${base_image}`, `${image_name}:latest`)
               core.exportVariable('DOCKERFILE_NAME', `docker/Dockerfile.${base_image}`)
-            } else if (base_image === 'bookwrom') {
+            } else if (base_image === 'bookworm') {
               tags.push(...version_tags.map(tag => `${tag}-${base_image}`))
               tags.push(`${image_name}:${base_image}`)
               core.exportVariable('DOCKERFILE_NAME', `docker/Dockerfile.${base_image}`)
