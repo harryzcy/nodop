@@ -5,8 +5,8 @@ import {
   collectPaginatedAPI
 } from '@notionhq/client'
 import {
-  PageObjectResponse,
   DataSourceObjectResponse,
+  PageObjectResponse,
   PartialDataSourceObjectResponse,
   PartialPageObjectResponse,
   PropertyItemListResponse,
