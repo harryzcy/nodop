@@ -187,7 +187,8 @@ describe('evaluate', () => {
           url: ''
         }
       },
-      in_trash: false
+      in_trash: false,
+      is_locked: false
     }
 
     // is_empty

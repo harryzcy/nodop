@@ -21,7 +21,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@notionhq/client": "5.0.0",
+    "@notionhq/client": "5.1.0",
     "js-yaml": "4.1.0",
     "tslib": "2.8.1",
     "winston": "3.17.0"
