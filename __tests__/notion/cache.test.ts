@@ -37,7 +37,8 @@ const page: PageObjectResponse = {
   archived: false,
   url: '',
   public_url: '',
-  in_trash: false
+  in_trash: false,
+  is_locked: false
 }
 
 describe('cached pages operations', () => {
