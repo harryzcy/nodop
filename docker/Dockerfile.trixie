@@ -1,4 +1,4 @@
-FROM node:24.8.0-trixie@sha256:f5162797de1d39d296791046ee253dc9c2f20c000f312aeb289c5e699f56c229 AS base
+FROM node:24.9.0-trixie@sha256:d77976ca59a7d6066208506456cdffa1ae9e10df29bbc822c7ee45ae27816574 AS base
 
 FROM base AS builder
 
